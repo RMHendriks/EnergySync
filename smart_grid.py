@@ -33,8 +33,12 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 running = False
 
+            print(pygame.mouse.get_pos())
+
         # fill the screen with a color to wipe away anything from last frame
         window.fill(pygame.Color("white"))
+
+        # draw the screen with objects
         draw(window, grid, battery_list, house_list)
 
         # RENDER YOUR GAME HERE
@@ -51,8 +55,9 @@ def draw(window: pygame.surface.Surface, grid: Grid, battery_list: List[Battery]
          house_list: List[House]) -> None:
     """ Draw objects to the screen"""
 
-    for cell in grid:
-        cell.draw(window)
+    for row in grid.grid:
+        for cell in row:
+            cell.draw(window)
 
     for house in house_list:
         house.draw(window)

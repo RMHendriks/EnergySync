@@ -16,13 +16,15 @@ class Battery():
     def draw(self, window: pygame.surface.Surface) -> None:
         """ Draw the battery to the screen. """
 
-        img_center = (self.cell.x + self.cell.size // 2,
-                      self.cell.y + self.cell.size // 2)
+        x = self.cell.x
+        y = self.cell.y
+        img_center = (x + self.cell.size // 2,
+                      y + self.cell.size // 2)
         window.blit(self.sprite, img_center)
 
     def load_sprite(self) -> None:
         """ Load the Battery sprite. """
 
         sprite = pygame.image.load("sprites/battery.png")
-        return pygame.transform.scale(sprite, (self.cell.size * 1.5,
-                                               self.cell.size * 1.5))
+        return pygame.transform.scale(sprite, (self.cell.size * 1,
+                                               self.cell.size * 1))

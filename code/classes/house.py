@@ -16,13 +16,13 @@ class House():
     def draw(self, window: pygame.surface.Surface) -> None:
         """ Draw the house to the screen. """
 
-        img_center = (self.cell.x + self.cell.size // 2,
-                      self.cell.y + self.cell.size // 2)
-        window.blit(self.sprite, img_center)
+        x = self.cell.x
+        y = self.cell.y
+        window.blit(self.sprite, (x, y))
 
     def load_sprite(self) -> None:
         """ Load the House sprite. """
 
         sprite = pygame.image.load("sprites/house.png")
-        return pygame.transform.scale(sprite, (self.cell.size * 1.5,
-                                               self.cell.size * 1.5))
+        return pygame.transform.scale(sprite, (self.cell.size * 1,
+                                               self.cell.size * 1))
