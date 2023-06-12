@@ -14,13 +14,13 @@ class Cell():
         self.x = x
         self.y = y
         self.size = size
-    	
+
         self.battery: Optional[Battery] = None
         self.house: Optional[House] = None
         self.cable_list: List[Cable] = []
 
         self.sprite = self.load_sprite()
-    
+
     def draw(self, window: pygame.surface.Surface) -> None:
         """ Draw cell to the screen. """
 
@@ -31,7 +31,7 @@ class Cell():
 
         sprite = pygame.image.load("sprites/grid.png")
         return pygame.transform.scale(sprite, (self.size, self.size))
-    
+
     def __str__(self) -> str:  
         """ Return the index of the cell. """
 

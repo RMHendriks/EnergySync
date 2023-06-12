@@ -1,5 +1,6 @@
 import pygame
 import csv
+import json
 from typing import List
 from code.classes.battery import Battery
 from code.classes.house import House
@@ -9,6 +10,7 @@ SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
 SPACING = 100
 GRID_SIZE = 51
+NEIGHBOURHOOD = "1"
 
 
 def main() -> None:
@@ -24,7 +26,7 @@ def main() -> None:
     battery_list: List[Battery] = []
     house_list: List[House] = []
 
-    import_neighbourhood(grid, battery_list, house_list, "1")
+    import_neighbourhood(grid, battery_list, house_list)
 
     while running:
         # poll for events
@@ -66,11 +68,11 @@ def draw(window: pygame.surface.Surface, grid: Grid, battery_list: List[Battery]
         battery.draw(window)
 
 def import_neighbourhood(grid: Grid, battery_list: List[Battery],
-                         house_list: List[House] ,district: str) -> None:
+                         house_list: List[House]) -> None:
     """ Import a neighboorhoud by reading the supplied csv file"""
 
     # open the battery csv file
-    with open(f"data/neighbourhoods/district_{district}/district-{district}_batteries.csv") as file:
+    with open(f"data/neighbourhoods/district_{NEIGHBOURHOOD}/district-{NEIGHBOURHOOD}_batteries.csv") as file:
         csv_battery_list = csv.reader(file)
 
         # skip the header
@@ -84,7 +86,7 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
             battery_list.append(battery_object)
 
     # open the house csv file
-    with open(f"data/neighbourhoods/district_{district}/district-{district}_houses.csv") as file:
+    with open(f"data/neighbourhoods/district_{NEIGHBOURHOOD}/district-{NEIGHBOURHOOD}_houses.csv") as file:
         csv_house_list = csv.reader(file)
 
         # skip the header
@@ -96,6 +98,10 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
             cell.house = house_object
             house_list.append(house_object)
 
+
+def generate_output(battery_list: List[Battery], house_list: List[House]) -> None:
+
+    output_dict = [{"district": int(NEIGHBOURHOOD), "costs-shared": 0}, {"location": ""}]
 
 if __name__ == "__main__":
     main()

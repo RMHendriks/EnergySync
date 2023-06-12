@@ -4,12 +4,17 @@ if TYPE_CHECKING:
     from code.classes.cell import Cell
 
 import pygame
+from typing import List
+from code.classes.house import House
 
 class Battery():
     def __init__(self, cell: Cell, capacity: float) -> None:
 
         self.cell = cell
+        self.max_capacity = capacity
         self.capacity = capacity
+
+        self.house_list: List[House] = []
 
         self.sprite = self.load_sprite()
 
