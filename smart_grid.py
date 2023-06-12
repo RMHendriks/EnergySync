@@ -1,5 +1,5 @@
 import pygame
-from classes.grid import Grid
+from code.classes.grid import Grid
 
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 700
