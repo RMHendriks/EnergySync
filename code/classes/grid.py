@@ -24,6 +24,12 @@ class Grid():
 
         return [[Cell(x, y, self.cell_size) for x in range(0, self.screen_width, self.cell_size)] for y in range(0, self.screen_height, self.cell_size)]
         
+
+    def get_cell_by_index(self, x: int, y: int):
+        """ Gets the index of a cell. """
+
+        return self.grid[x][y]
+
     def __iter__(self) -> Grid:
         """ Sets up the iterator. """
 
