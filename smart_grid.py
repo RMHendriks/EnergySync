@@ -1,4 +1,5 @@
 import pygame
+from classes.grid import Grid
 
 def main():
     # pygame setup
@@ -7,9 +8,8 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
-    for x in range(50):
-        for y in range(50):
-            print(f"{x},{y}")
+    grid = Grid()
+    grid.make_grid(50,50)
 
     while running:
         # poll for events
