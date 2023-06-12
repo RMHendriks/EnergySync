@@ -61,7 +61,7 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
     """ Import a neighboorhoud by reading the supplied csv file"""
 
     # open the battery csv file
-    with open(f"neighbourhoods/district_{district}/district-{district}_batteries.csv") as file:
+    with open(f"data/neighbourhoods/district_{district}/district-{district}_batteries.csv") as file:
         csv_battery_list = csv.reader(file)
 
         # skip the header
@@ -72,7 +72,7 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
             print(position)
 
     # open the house csv file
-    with open(f"neighbourhoods/district_{district}/district-{district}_houses.csv") as file:
+    with open(f"data/neighbourhoods/district_{district}/district-{district}_houses.csv") as file:
         csv_house_list = csv.reader(file)
 
         # skip the header
