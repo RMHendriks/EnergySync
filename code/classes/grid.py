@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import List
-from classes.cell import Cell
+from code.classes.cell import Cell
 
 class Grid():
     def __init__(self, screen_width: int, screen_height: int, grid_size: int) -> None:
