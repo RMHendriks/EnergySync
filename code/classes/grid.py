@@ -4,11 +4,12 @@ from typing import List
 from code.classes.cell import Cell
 
 class Grid():
-    def __init__(self, screen_width: int, screen_height: int, grid_size: int) -> None:
+    def __init__(self, screen_width: int, screen_height: int, grid_size: int, spacing: int) -> None:
         """ Initializes the grid. """
 
         self.screen_width = screen_width
         self.screen_height = screen_height
+        self.spacing = spacing // 2
 
         self.cell_size = int(screen_width // grid_size)
 
@@ -22,9 +23,8 @@ class Grid():
         Postcondition:
         """
 
-        return [[Cell(x, y, self.cell_size) for x in range(0, self.screen_width, self.cell_size)] for y in range(0, self.screen_height, self.cell_size)]
-    
-        
+        return [[Cell(x, y, self.cell_size) for x in range(self.spacing, self.screen_width + self.spacing, self.cell_size)]
+                for y in range(self.spacing, self.screen_height + self.spacing, self.cell_size)]
 
     def get_cell_by_index(self, x: int, y: int):
         """ Gets the index of a cell. """

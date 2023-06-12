@@ -5,19 +5,20 @@ from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.grid import Grid
 
-SCREEN_WIDTH = 700
-SCREEN_HEIGHT = 700
-GRID_SIZE = 50
+SCREEN_WIDTH = 1020
+SCREEN_HEIGHT = 1020
+SPACING = 100
+GRID_SIZE = 51
 
 
 def main() -> None:
     # pygame setup
     pygame.init()
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    window = pygame.display.set_mode((SCREEN_WIDTH + SPACING, SCREEN_HEIGHT + SPACING))
     clock = pygame.time.Clock()
     running = True
 
-    grid = Grid(SCREEN_WIDTH, SCREEN_HEIGHT, GRID_SIZE)
+    grid = Grid(SCREEN_WIDTH, SCREEN_HEIGHT, GRID_SIZE, SPACING)
     grid.make_grid()
 
     battery_list: List[Battery] = []
@@ -33,6 +34,7 @@ def main() -> None:
                 running = False
 
         # fill the screen with a color to wipe away anything from last frame
+        window.fill(pygame.Color("white"))
         draw(window, grid, battery_list, house_list)
 
         # RENDER YOUR GAME HERE
@@ -55,6 +57,8 @@ def draw(window: pygame.surface.Surface, grid: Grid, battery_list: List[Battery]
     for house in house_list:
         house.draw(window)
 
+    for battery in battery_list:
+        battery.draw(window)
 
 def import_neighbourhood(grid: Grid, battery_list: List[Battery],
                          house_list: List[House] ,district: str) -> None:
@@ -69,7 +73,10 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
 
         for battery in csv_battery_list:
             position = battery[0].split(",")
-            print(position)
+            cell = grid.get_cell_by_index(int(position[0]), int(position[1]))
+            battery_object = Battery(cell, float(battery[1]))
+            cell.battery = battery_object
+            battery_list.append(battery_object)
 
     # open the house csv file
     with open(f"data/neighbourhoods/district_{district}/district-{district}_houses.csv") as file:
@@ -79,7 +86,7 @@ def import_neighbourhood(grid: Grid, battery_list: List[Battery],
         next(csv_house_list)
 
         for house in csv_house_list:
-            cell = grid.get_cell_by_index(int(house[0]) - 1, int(house[1]) - 1)
+            cell = grid.get_cell_by_index(int(house[0]), int(house[1]))
             house_object = House(cell, float(house[2]))
             cell.house = house_object
             house_list.append(house_object)
