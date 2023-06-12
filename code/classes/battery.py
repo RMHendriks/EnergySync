@@ -1,5 +1,4 @@
 
 class Battery():
-    def __init__(self) -> None:
-        #TODO
-        pass
+    def __init__(self, capacity) -> None:
+        self.capacity = capacity
