@@ -23,6 +23,7 @@ class Grid():
         """
 
         return [[Cell(x, y, self.cell_size) for x in range(0, self.screen_width, self.cell_size)] for y in range(0, self.screen_height, self.cell_size)]
+    
         
 
     def get_cell_by_index(self, x: int, y: int):
