@@ -5,6 +5,8 @@ SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 700
 GRID_SIZE = 50
 
+NEIGHBOURHOODS = {}
+
 
 def main() -> None:
     # pygame setup
@@ -41,6 +43,10 @@ def draw(window: pygame.surface.Surface, grid: Grid) -> None:
 
     for cell in grid:
         cell.draw(window)
+
+def import_neighbourhood() -> None:
+    """ Import a neighboorhoud by reading the supplied csv file"""
+
 
 
 if __name__ == "__main__":
