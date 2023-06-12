@@ -18,9 +18,7 @@ class Battery():
 
         x = self.cell.x
         y = self.cell.y
-        img_center = (x + self.cell.size // 2,
-                      y + self.cell.size // 2)
-        window.blit(self.sprite, img_center)
+        window.blit(self.sprite, (x, y))
 
     def load_sprite(self) -> None:
         """ Load the Battery sprite. """
