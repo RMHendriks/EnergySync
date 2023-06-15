@@ -31,3 +31,6 @@ class Battery():
         sprite = pygame.image.load("sprites/battery.png")
         return pygame.transform.scale(sprite, (self.cell.size * 1,
                                                self.cell.size * 1))
+
+    def __repr__(self) -> str:
+            return f"{self.cell.x_index}, {self.cell.y_index}"
