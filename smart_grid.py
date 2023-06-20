@@ -8,6 +8,7 @@ from code.classes.house import House
 from code.classes.cable import Cable
 from code.classes.grid import Grid
 from code.algorithms.random import Random
+from code.algorithms.greedy import Greedy
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
@@ -38,8 +39,8 @@ def main() -> None:
     cost_list: List[int] = []
 
     # calculate a random solution
-    for _ in range(100):
-        algorithm = Random(grid)
+    for _ in range(1):
+        algorithm = Greedy(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
