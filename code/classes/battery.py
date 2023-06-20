@@ -33,4 +33,4 @@ class Battery():
                                                self.cell.size * 1))
 
     def __repr__(self) -> str:
-            return f"{self.cell.x_index}, {self.cell.y_index}"
+            return f"Battery: [{self.cell.x_index}, {self.cell.y_index}]"

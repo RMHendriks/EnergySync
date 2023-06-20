@@ -7,7 +7,7 @@ from code.classes.house import House
 from code.classes.cable import Cable
 
 class Greedy():
-    """ class that implements the greedy algorithm
+    """ Class that implements the greedy algorithm
     for the smart grid problem. """
 
     def __init__(self, grid: Grid) -> None:
@@ -36,16 +36,13 @@ class Greedy():
 
                         battery_dict[battery] = distance
 
-                print(battery_dict)
-
-                if len(battery_dict) > 0 and battery.capacity >= house.max_output:
+                if len(battery_dict) > 0:
                     battery = min(battery_dict, key=battery_dict.get)
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
                     self.allocated_house_list.append(house)
                 else:
-                    print("?")
                     cycle_counter += 1
                     self.grid.clean_grid()
                     self.allocated_house_list = []

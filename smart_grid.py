@@ -39,7 +39,7 @@ def main() -> None:
     cost_list: List[int] = []
 
     # calculate a random solution
-    for _ in range(1):
+    for _ in range(100):
         algorithm = Greedy(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
@@ -58,6 +58,7 @@ def main() -> None:
             writer.writerow([cost])
 
     # generate_output(grid)
+    load_sprites(grid)
 
     while running:
         # poll for events
@@ -96,6 +97,12 @@ def draw(window: pygame.surface.Surface, grid: Grid, battery_list: List[Battery]
     for battery in battery_list:
         battery.draw(window)
 
+def load_sprites(grid: Grid) -> None:
+    """ Loads the correct cable sprite for the cell """
+
+    for cell in grid:
+        cell.load_sprite()
+    
 
 def import_neighbourhood(grid: Grid, battery_list: List[Battery],
                          house_list: List[House]) -> None:
