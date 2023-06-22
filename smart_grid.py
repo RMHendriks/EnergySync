@@ -19,7 +19,7 @@ VERTICAL_MARGIN = 50
 HORIZONTAL_MARGIN = 500
 GRID_SIZE = 51
 NEIGHBOURHOOD = "1"
-ITERATIONS = 100
+ITERATIONS = 1
 
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -73,7 +73,7 @@ def main() -> None:
     load_sprites(grid)
 
     # load the ui
-    user_interface = UserInterface(SCREEN_WIDTH, VERTICAL_MARGIN, HORIZONTAL_MARGIN)
+    user_interface = UserInterface(grid, SCREEN_WIDTH, VERTICAL_MARGIN, HORIZONTAL_MARGIN)
 
     while running:
         # poll for events
@@ -124,7 +124,9 @@ def draw(window: pygame.surface.Surface, grid: Grid, battery_list: List[Battery]
 def update(grid: Grid, user_interface: UserInterface) -> None:
     """ Updates the UI and objects on the screen every frame. """
     
-    user_interface.text_list[0].text = f"Total Cost: {calculate_total_cost(grid)}"
+    user_interface.text_list[0].text = f"Total Cost:    {calculate_total_cost(grid):,}"
+    user_interface.text_list[1].text = f"Total Cables:  {len(grid.cable_list):,}"
+    user_interface.text_list[2].text = f"{round(grid.delay_timer_ms, 2)}"
 
 
 def load_sprites(grid: Grid) -> None:

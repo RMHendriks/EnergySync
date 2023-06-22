@@ -27,6 +27,8 @@ class Grid():
 
         self.grid: List[List[Cell]] = self.make_grid()
 
+        self.delay_timer_ms = 0
+
     def make_grid(self):
         """
         Makes the grid 
