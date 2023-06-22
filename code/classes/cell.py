@@ -33,6 +33,7 @@ class Cell():
 
     def load_sprite(self) -> None:
         """ Draw cell to the screen. """
+
         if (self.x_index > 0 and self.y_index > 0 and self.x_index < 50 and self.y_index < 50 and
             self.grid.grid[self.x_index - 1][self.y_index].cable_list and
            self.grid.grid[self.x_index + 1][self.y_index].cable_list and

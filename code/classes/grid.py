@@ -32,8 +32,15 @@ class Grid():
         Postcondition:
         """
 
-        return [[Cell(self, x, y, self.cell_size, x_index, y_index) for x_index, x in enumerate(range(self.spacing, self.screen_width + self.spacing, self.cell_size))]
-                for y_index, y in enumerate(range(self.spacing, self.screen_height + self.spacing, self.cell_size))]
+        grid: List[List[Cell]] = []
+
+        for x_index, x in enumerate(range(self.spacing, self.screen_width + self.spacing, self.cell_size)):
+            cell_list: List[Cell] = []
+            for y_index, y in enumerate(range(self.spacing + self.screen_height, self.spacing, -self.cell_size)):
+                cell_list.append(Cell(self, x, y, self.cell_size, x_index, y_index))
+            grid.append(cell_list)
+
+        return grid
 
     def get_cell_by_index(self, x: int, y: int):
         """ Gets the index of a cell. """
