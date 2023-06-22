@@ -61,6 +61,34 @@ class Grid():
             house.battery = None
             house.cable_list = []
 
+    def assign_connections(self) -> None:
+        """ Fill in the connections between cells
+        according to the positions of the cables. """
+
+
+        for house in self.house_list:
+            print(house.cable_list)
+            for index, cable in enumerate(house.cable_list):
+                if index < len(house.cable_list) - 1:
+                    cell_index = cable.cell.get_index()
+                    next_cell_index = house.cable_list[index + 1].cell.get_index()
+
+                    if next_cell_index[0] > cell_index[0]:
+                        cable.cell.connections.right = True
+                        house.cable_list[index + 1].cell.connections.left = True
+                    elif next_cell_index[0] < cell_index[0]:
+                        cable.cell.connections.left = True
+                        house.cable_list[index + 1].cell.connections.right = True
+                    elif next_cell_index[1] > cell_index[1]:
+                        cable.cell.connections.top = True
+                        house.cable_list[index + 1].cell.connections.bottom = True
+                    elif next_cell_index[1] < cell_index[1]:
+                        cable.cell.connections.bottom = True
+                        house.cable_list[index + 1].cell.connections.top = True
+
+                    print(cable.cell.connections)
+
+
     def __iter__(self) -> Grid:
         """ Sets up the iterator. """
 

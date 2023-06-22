@@ -14,9 +14,10 @@ from code.algorithms.greedier import Greedier
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
-SPACING = 10
+SPACING = 50
 GRID_SIZE = 51
-NEIGHBOURHOOD = "2"
+NEIGHBOURHOOD = "1"
+ITERATIONS = 100
 
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -42,13 +43,15 @@ def main() -> None:
 
     # calculate a random solution
     start_time_program = time.time()
-    for _ in range(1):
-        algorithm = Greedier(grid)
+    for iteration in range(ITERATIONS):
+        algorithm = Greedy(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
-        generate_output(grid)
-        grid.clean_grid()
+
+        if iteration != ITERATIONS - 1:
+            grid.clean_grid()
+
     end_time_program = time.time()
     
     print(f"Average: {round(mean(cost_list))}")
@@ -63,6 +66,11 @@ def main() -> None:
         for cost in cost_list:
             writer.writerow([cost])
     
+    # write the last result in a JSON file
+    generate_output(grid)
+
+    # assign the connections to a cell for a correct pygame visualisation
+    grid.assign_connections()
     load_sprites(grid)
 
     while running:
