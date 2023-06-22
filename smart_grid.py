@@ -16,7 +16,7 @@ SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
 SPACING = 10
 GRID_SIZE = 51
-NEIGHBOURHOOD = "3"
+NEIGHBOURHOOD = "2"
 
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -42,12 +42,12 @@ def main() -> None:
 
     # calculate a random solution
     start_time_program = time.time()
-    for _ in range(100):
-        algorithm = Greedy(grid)
+    for _ in range(1):
+        algorithm = Greedier(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
-        ##generate_output(grid)
+        generate_output(grid)
         grid.clean_grid()
     end_time_program = time.time()
     

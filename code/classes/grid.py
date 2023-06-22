@@ -17,6 +17,7 @@ class Grid():
         self.spacing = spacing // 2
 
         self.cell_size = int(screen_width // grid_size)
+        self.grid_size = grid_size
 
         self.battery_list: List[Battery] = battery_list
         self.house_list: List[House] = house_list

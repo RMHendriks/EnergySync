@@ -31,7 +31,7 @@ class Greedier():
         # Sort the list by distance
         distance_list.sort(key=lambda x: x[0])
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)+1):
+        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)):
             # Iterate over sorted list and make connections
             for distance, house, battery in distance_list:
 
@@ -55,7 +55,7 @@ class Greedier():
         house_index = house.cell.get_index()
         battery_index = battery.cell.get_index()
 
-        delta = (battery_index[0] - house_index[0], battery_index[1], house_index[1])
+        delta = (battery_index[0] - house_index[0], battery_index[1] - house_index[1])
         incerement_x = 1 if delta[0] > 0 else -1
         incerement_y = 1 if delta[1] > 0 else -1
 
@@ -66,12 +66,16 @@ class Greedier():
             house.cable_list.append(cable)
             self.grid.cable_list.append(cable)
 
-        for y in range(house_index[1], battery_index[1] + incerement_y, incerement_y):
+        for y in range(house_index[1] + incerement_y, battery_index[1] + incerement_y, incerement_y):
             cell = self.grid.grid[battery_index[0]][y]
             cable = Cable(cell, battery, house)
             cell.cable_list.append(cable)
             house.cable_list.append(cable)
             self.grid.cable_list.append(cable)
+
+        if (battery_index[0] != house.cable_list[-1].cell.x_index or
+            battery_index[1] != house.cable_list[-1].cell.y_index):
+            Exception("Cables are not connected to the battery") 
 
     def calculate_distance(self, battery: Battery, house: House) -> int:
         """ Calculates the distance between a house and a battery. 
