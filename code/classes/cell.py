@@ -34,12 +34,69 @@ class Cell():
     def load_sprite(self) -> None:
         """ Draw cell to the screen. """
 
+        if not self.cable_list:
+            sprite = pygame.image.load("sprites/grid.png")
+            self.sprite = pygame.transform.scale(sprite, (self.size, self.size))
+            return
+
         if (self.x_index > 0 and self.y_index > 0 and self.x_index < 50 and self.y_index < 50 and
-            self.grid.grid[self.x_index - 1][self.y_index].cable_list and
+           self.grid.grid[self.x_index - 1][self.y_index].cable_list and
            self.grid.grid[self.x_index + 1][self.y_index].cable_list and
            self.grid.grid[self.x_index][self.y_index + 1].cable_list and 
-           self.grid.grid[self.x_index][self.y_index + 1].cable_list):
+           self.grid.grid[self.x_index][self.y_index - 1].cable_list):
             sprite = pygame.image.load("sprites/grid_1_2_3_4.png")
+        elif (self.x_index > 50 and self.y_index < 50 and self.y_index > 0 and
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list and 
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_2_3.png")
+        elif (self.x_index > 50 and self.y_index < 50 and self.x_index > 0 and
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list and 
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_2_4.png")
+        elif (self.x_index > 0 and self.y_index < 50 and self.y_index > 0 and
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list and 
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_3_4.png")
+        elif (self.x_index > 0 and self.x_index < 50 and self.y_index > 0 and
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list and 
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list and
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_2_3_4.png")     
+        elif (self.y_index > 0 and self.y_index < 50 and
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and 
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_3.png")
+        elif (self.x_index > 0 and self.x_index < 50 and
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list and 
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_2_4.png")
+        elif (self.y_index < 50 and self.x_index < 50 and
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and 
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_2.png")
+        elif (self.y_index > 0 and self.x_index < 50 and
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list and 
+              self.grid.grid[self.x_index + 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_2_3.png")
+        elif (self.y_index > 0 and self.x_index > 0 and
+              self.grid.grid[self.x_index][self.y_index - 1].cable_list and 
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_3_4.png")
+        elif (self.y_index > 50 and self.x_index > 0 and
+              self.grid.grid[self.x_index][self.y_index + 1].cable_list and 
+              self.grid.grid[self.x_index - 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_1_4.png")
+        elif (self.y_index < 50 and self.grid.grid[self.x_index][self.y_index + 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_1.png")
+        elif (self.x_index < 50 and self.grid.grid[self.x_index + 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_2.png")
+        elif (self.y_index > 0 and self.grid.grid[self.x_index][self.y_index - 1].cable_list):
+            sprite = pygame.image.load("sprites/grid_3.png")
+        elif (self.x_index > 0 and self.grid.grid[self.x_index - 1][self.y_index].cable_list):
+            sprite = pygame.image.load("sprites/grid_4.png")
         else:
             sprite = pygame.image.load("sprites/grid.png")
 
