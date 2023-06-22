@@ -22,36 +22,24 @@ class Greedier():
 
         cycle_counter = 1
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)):
-    
-            random.shuffle(self.non_allocated_house_list)
-
-            distance_list = []
-            for house in self.non_allocated_house_list:
-                for battery in self.grid.battery_list:
-                        distance = self.calculate_distance(battery, house)
-                        distance_list.append((distance, house, battery))
+        distance_list = []
+        for house in self.non_allocated_house_list:
+            for battery in self.grid.battery_list:
+                distance = self.calculate_distance(battery, house)
+                distance_list.append((distance, house, battery))
         
-            # Sort the list by distance
-            distance_list.sort()
+        # Sort the list by distance
+        distance_list.sort(key=lambda x: x[0])
 
+        while(len(self.non_allocated_house_list) != len(self.allocated_house_list) + 1):
             # Iterate over sorted list and make connections
             for distance, house, battery in distance_list:
-                
-                battery_dict: Dict[Battery, int] = {}
 
                 if battery.capacity >= house.max_output and house not in self.allocated_house_list:
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
                     self.allocated_house_list.append(house)
-                    self.draw_path(battery, house)
-
-                else:
-                    cycle_counter += 1
-                    self.grid.clean_grid()
-                    self.allocated_house_list = []
-                    break
 
         for house in self.allocated_house_list:
             self.draw_path(house.battery, house)

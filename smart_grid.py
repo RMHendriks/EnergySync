@@ -41,10 +41,11 @@ def main() -> None:
 
     # calculate a random solution
     for _ in range(100):
-        algorithm = Greedy(grid)
+        algorithm = Greedier(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
+        generate_output(grid)
         grid.clean_grid()
     
     print(f"Average: {round(mean(cost_list))}")
@@ -57,8 +58,7 @@ def main() -> None:
         writer.writerow(["Results"])
         for cost in cost_list:
             writer.writerow([cost])
-
-    # generate_output(grid)
+    
     load_sprites(grid)
 
     while running:
