@@ -31,7 +31,7 @@ class Greedier():
         # Sort the list by distance
         distance_list.sort(key=lambda x: x[0])
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list) + 1):
+        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)+1):
             # Iterate over sorted list and make connections
             for distance, house, battery in distance_list:
 

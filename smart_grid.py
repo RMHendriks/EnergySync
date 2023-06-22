@@ -1,6 +1,7 @@
 import pygame
 import csv
 import json
+import time
 from typing import List
 from statistics import mean, median
 from code.classes.battery import Battery
@@ -13,9 +14,9 @@ from code.algorithms.greedier import Greedier
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
-SPACING = 100
+SPACING = 10
 GRID_SIZE = 51
-NEIGHBOURHOOD = "1"
+NEIGHBOURHOOD = "3"
 
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -40,16 +41,19 @@ def main() -> None:
     cost_list: List[int] = []
 
     # calculate a random solution
-    for _ in range(100):
-        algorithm = Greedier(grid)
+    start_time_program = time.time()
+    for _ in range(1000):
+        algorithm = Greedy(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
-        generate_output(grid)
+        ##generate_output(grid)
         grid.clean_grid()
+    end_time_program = time.time()
     
     print(f"Average: {round(mean(cost_list))}")
     print(f"Median: {round(median(cost_list))}")
+    print(f"Total time for the program: {round(end_time_program - start_time_program, 3)} seconds")
 
     # write the results to a csv file
     with open("data.csv", "w") as file:
