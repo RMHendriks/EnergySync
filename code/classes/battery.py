@@ -28,7 +28,7 @@ class Battery():
     def load_sprite(self) -> None:
         """ Load the Battery sprite. """
 
-        sprite = pygame.image.load("sprites/battery.png")
+        sprite = pygame.image.load("sprites/battery_2.png")
         return pygame.transform.scale(sprite, (self.cell.size * 1,
                                                self.cell.size * 1))
 

@@ -8,13 +8,15 @@ from code.classes.cable import Cable
 
 class Grid():
     def __init__(self, screen_width: int, screen_height: int, grid_size: int,
-                 spacing: int, battery_list: List[Battery], house_list: List[House],
+                 vertical_spacing: int, horizontal_spacing: int,
+                 battery_list: List[Battery], house_list: List[House],
                  cable_list: List[Cable]) -> None:
         """ Initializes the grid. """
 
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.spacing = spacing // 2
+        self.vertical_spacing = vertical_spacing // 2
+        self.horizontal_spacing = horizontal_spacing // 2
 
         self.cell_size = int(screen_width // grid_size)
         self.grid_size = grid_size
@@ -35,9 +37,12 @@ class Grid():
 
         grid: List[List[Cell]] = []
 
-        for x_index, x in enumerate(range(self.spacing, self.screen_width + self.spacing, self.cell_size)):
+        for x_index, x in enumerate(range(self.horizontal_spacing,
+                                          self.screen_width + self.horizontal_spacing,
+                                          self.cell_size)):
             cell_list: List[Cell] = []
-            for y_index, y in enumerate(range(self.spacing + self.screen_height, self.spacing, -self.cell_size)):
+            for y_index, y in enumerate(range(self.vertical_spacing + self.screen_height,
+                                              self.vertical_spacing, -self.cell_size)):
                 cell_list.append(Cell(self, x, y, self.cell_size, x_index, y_index))
             grid.append(cell_list)
 
@@ -65,9 +70,7 @@ class Grid():
         """ Fill in the connections between cells
         according to the positions of the cables. """
 
-
         for house in self.house_list:
-            print(house.cable_list)
             for index, cable in enumerate(house.cable_list):
                 if index < len(house.cable_list) - 1:
                     cell_index = cable.cell.get_index()
@@ -85,8 +88,6 @@ class Grid():
                     elif next_cell_index[1] < cell_index[1]:
                         cable.cell.connections.bottom = True
                         house.cable_list[index + 1].cell.connections.top = True
-
-                    print(cable.cell.connections)
 
 
     def __iter__(self) -> Grid:

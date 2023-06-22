@@ -30,7 +30,7 @@ class House():
     def load_sprite(self) -> None:
         """ Load the House sprite. """
 
-        sprite = pygame.image.load("sprites/house.png")
+        sprite = pygame.image.load("sprites/house_2.png")
         return pygame.transform.scale(sprite, (self.cell.size * 1,
                                                self.cell.size * 1))
 
