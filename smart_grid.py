@@ -9,6 +9,7 @@ from code.classes.cable import Cable
 from code.classes.grid import Grid
 from code.algorithms.random import Random
 from code.algorithms.greedy import Greedy
+from code.algorithms.greedier import Greedier
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
