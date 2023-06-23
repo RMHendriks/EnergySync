@@ -32,15 +32,21 @@ class Cell():
         self.house: Optional[House] = None
         self.cable_list: List[Cable] = []
 
+        self.sprite:  Optional[pygame.surface.Surface] = None
+
     def draw(self, window: pygame.surface.Surface) -> None:
         """ Draw cell to the screen. """
 
-        window.blit(self.sprite, [self.x, self.y])
+        if self.sprite is not None:
+            window.blit(self.sprite, [self.x, self.y])
 
-    def load_sprite(self) -> None:
+    def load_sprite(self, highlight_sprite=False) -> None:
         """ Draw cell to the screen. """
 
-        sprite = pygame.image.load(self.connections.load_sprite())
+        if highlight_sprite:
+            sprite = pygame.image.load(self.connections.load_sprite(highlight_sprite=True))
+        else:
+            sprite = pygame.image.load(self.connections.load_sprite())
 
         self.sprite = pygame.transform.scale(sprite, (self.size, self.size))
 

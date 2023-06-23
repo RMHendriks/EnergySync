@@ -3,16 +3,16 @@ import csv
 import json
 import time
 from typing import List
+from copy import deepcopy
 from statistics import mean, median
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 from code.classes.grid import Grid
+from code.classes.cell import Cell
 from code.classes.user_interface import UserInterface
 from code.algorithms.algorithm import Algorithm
-from code.algorithms.random import Random
-from code.algorithms.greedy import Greedy
-from code.algorithms.greedier import Greedier
+
 
 class Program():
 
@@ -42,6 +42,7 @@ class Program():
         self.house_list: List[House] = []
         self.cable_list: List[Cable] = []
         self.house_cable_iter_list: List[Cable] = []
+        self.highlight_cable_list: List[Cable] = []
 
         self.grid = Grid(screen_width, screen_height, grid_size, vertical_margin,
                         horizontal_margin, self.battery_list, self.house_list,
@@ -178,6 +179,9 @@ class Program():
         if self.visualisation_mode:
             self.house_index = 0
             self.house_cable_iter_list = iter(self.grid.house_list[self.house_index].cable_list)
+            self.highlight_cable_list = self.copy_cable_list()
+            self.house_index = 0
+            self.cable_index = 0
 
     def draw(self, window: pygame.surface.Surface, user_interface: UserInterface) -> None:
         """ Draw objects to the screen every frame. """
@@ -186,12 +190,15 @@ class Program():
             for cell in row:
                 cell.draw(window)
 
+        for cable in self.highlight_cable_list:
+            cable.cell.draw(window)
+
         for house in self.house_list:
             house.draw(window)
 
         for battery in self.battery_list:
             battery.draw(window)
-
+        
         user_interface.draw(window)
 
     def update(self, user_interface: UserInterface) -> None:
@@ -207,17 +214,35 @@ class Program():
             self.delay_timer_ms):
             for cable in self.house_cable_iter_list:
                 if self.cable_index < len(self.grid.house_list[self.house_index].cable_list) - 1:
+
+                    # draws a regular (blue) cable
                     next_cell = self.grid.house_list[self.house_index].cable_list[self.cable_index + 1]
                     cable.cell.assign_connection(next_cell)
+    
+                    # draws a highlighted (red) cable 
+                    next_highlight_cell = self.highlight_cable_list[self.cable_index + 1]
+                    self.highlight_cable_list[self.cable_index].cell.assign_connection(next_highlight_cell)
+
+                # load the correct sprites for the regular and highlighted cable
                 cable.cell.load_sprite()
+                self.highlight_cable_list[self.cable_index].cell.load_sprite(highlight_sprite=True)
+
 
                 if cable == self.grid.house_list[self.house_index].cable_list[-1]:
                     self.house_index += 1
                     if self.house_index >= len(self.grid.house_list):
+                        # empties the list to stop iteration when everything
+                        # has been drawn
                         self.house_cable_iter_list = []
+                        self.highlight_cable_list = []
+                        cable.house.load_sprite_connected()
+
                     else:
+                        # resets the cable list for the next house
+                        self.highlight_cable_list = self.copy_cable_list()
                         self.house_cable_iter_list = iter(self.grid.house_list[self.house_index].cable_list)
                         self.cable_index = 0
+                        cable.house.load_sprite_connected()
                         break
 
                 self.cable_index += 1
@@ -235,6 +260,21 @@ class Program():
         """ Calculate the total costs of the cables and batteries on the grid. """
 
         return len(self.battery_list) * self.battery_cost + len(self.grid.cable_list) * self.cable_cost
+
+    def copy_cable_list(self) -> List[Cable]:
+        """ Copies a cable list and fills the cables with copied cells
+        (Deepcopy doesn't work with pygame surfaces)"""
+
+        copied_cable_list = []
+
+        for cable in self.grid.house_list[self.house_index].cable_list:
+            cell = Cell(cable.cell.grid, cable.cell.x, cable.cell.y,
+                        cable.cell.size, cable.cell.x_index, cable.cell.y_index)
+            battery = cable.cell.battery
+            house = cable.cell.house
+            copied_cable_list.append(Cable(cell, battery, house))
+
+        return copied_cable_list
 
     def generate_output(self) -> None:
         """ Generate a JSON output for the solution of the case. """

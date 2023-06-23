@@ -6,6 +6,7 @@ from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
+
 class Grid():
     def __init__(self, screen_width: int, screen_height: int, grid_size: int,
                  vertical_spacing: int, horizontal_spacing: int,
@@ -66,6 +67,12 @@ class Grid():
         for house in self.house_list:
             house.battery = None
             house.cable_list = []
+            house.sprite = house.load_sprite()
+
+        for row in self.grid:
+            for cell in row:
+                cell.connections.clear_connections()
+                cell.load_sprite()
 
     def assign_connections(self) -> None:
         """ Fill in the connections between cells

@@ -27,12 +27,19 @@ class House():
         y = self.cell.y
         window.blit(self.sprite, (x, y))
 
-    def load_sprite(self) -> None:
+    def load_sprite(self) -> pygame.surface.Surface:
         """ Load the House sprite. """
 
-        sprite = pygame.image.load("sprites/house_2.png")
+        sprite = pygame.image.load("sprites/house_2_black.png")
         return pygame.transform.scale(sprite, (self.cell.size * 1,
                                                self.cell.size * 1))
+    
+    def load_sprite_connected(self) -> None:
+        """ Loads the sprite when the house is connected in the visualisation. """
+
+        sprite = pygame.image.load("sprites/house_2.png")
+        self.sprite = pygame.transform.scale(sprite, (self.cell.size * 1,
+                                             self.cell.size * 1))
 
     def __repr__(self) -> str:
         return f"{self.cell.x}, {self.cell.y}"

@@ -1,15 +1,5 @@
-import pygame
-import csv
-import json
-import time
 from typing import List
-from statistics import mean, median
 from code.classes.program import Program
-from code.classes.battery import Battery
-from code.classes.house import House
-from code.classes.cable import Cable
-from code.classes.grid import Grid
-from code.classes.user_interface import UserInterface
 from code.algorithms.algorithm import Algorithm
 from code.algorithms.random import Random
 from code.algorithms.greedy import Greedy
