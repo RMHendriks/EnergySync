@@ -1,12 +1,13 @@
 import random
 from typing import List
 from copy import copy
+from code.algorithms.algorithm import Algoritm
 from code.classes.grid import Grid
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
-class Random():
+class Random(Algoritm):
     """ class that generates a random solution
     for the smart grid problem. """
 
@@ -82,6 +83,3 @@ class Random():
         if (battery_index[0] != house.cable_list[-1].cell.x_index or
             battery_index[1] != house.cable_list[-1].cell.y_index):
             Exception("Cables are not connected to the battery") 
-
-
-    

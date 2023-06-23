@@ -15,7 +15,8 @@ class Cell():
     """ Class that holds all the information of a grid cell.
     This includes cables, houses, batteries. """
 
-    def __init__(self, grid: Grid, x: int, y: int, size: int, x_index: int, y_index: int) -> None:
+    def __init__(self, grid: Grid, x: int, y: int, size: int, x_index: int,
+                 y_index: int) -> None:
 
         self.grid = grid
         self.connections = Connection()
@@ -47,6 +48,24 @@ class Cell():
         """ Get the index of the cell. """
 
         return (self.x_index, self.y_index)
+    
+    def assign_connection(self, next_cable: Cable) -> None:
+
+        cell_index = self.get_index()
+        next_cell_index = next_cable.cell.get_index()
+        
+        if next_cell_index[0] > cell_index[0]:
+            self.connections.right = True
+            next_cable.cell.connections.left = True
+        elif next_cell_index[0] < cell_index[0]:
+            self.connections.left = True
+            next_cable.cell.connections.right = True
+        elif next_cell_index[1] > cell_index[1]:
+            self.connections.top = True
+            next_cable.cell.connections.bottom = True
+        elif next_cell_index[1] < cell_index[1]:
+            self.connections.bottom = True
+            next_cable.cell.connections.top = True
 
     def __str__(self) -> str:  
         """ Return the index of the cell. """

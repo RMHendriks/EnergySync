@@ -24,7 +24,7 @@ class Greediest():
         cycle_counter = 1
 
         total_houses = len(self.non_allocated_house_list)   
-        threshold = total_houses * 0.5 # 90% threshold
+        threshold = total_houses * 0.72 # 90% threshold
 
         distance_list = []
         for house in self.non_allocated_house_list:
