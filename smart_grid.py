@@ -6,7 +6,7 @@ from code.algorithms.greedy import Greedy
 from code.algorithms.greedier import Greedier
 from code.algorithms.greediest import Greediest
 
-VISUALISATION_MODE = True
+VISUALISATION_MODE = False
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
@@ -20,7 +20,7 @@ BATTERY_COST = 5000
 CABLE_COST = 9
 
 ALGORITHM_LIST: List[Algorithm] = [Random, Greedy, Greedier, Greediest]
-ALGORITHM: Algorithm = Random
+ALGORITHM: Algorithm = Greedy
 
 
 def main() -> None:

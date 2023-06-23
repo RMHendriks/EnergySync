@@ -50,13 +50,28 @@ class Grid():
 
         return grid
 
-    def get_cell_by_index(self, x: int, y: int):
+    def get_cell_by_index(self, x: int, y: int) -> Cell:
         """ Gets the index of a cell. """
 
         return self.grid[x][y]
     
-    def clean_grid(self):
-        """ Clean the grid from all house/battery assignments and cables. """
+    def clean_grid(self) -> None:
+        """ Clean the grid from all house/battery assignments and cables for
+        console mode. """
+        
+        self.cable_list = []
+
+        for battery in self.battery_list:
+            battery.house_list = []
+            battery.capacity = battery.max_capacity
+
+        for house in self.house_list:
+            house.battery = None
+            house.cable_list = []
+    
+    def clean_grid_visualisation(self) -> None:
+        """ Clean the grid from all house/battery assignments and cables for
+        visualisation mode. """
 
         self.cable_list = []
 

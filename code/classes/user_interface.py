@@ -79,7 +79,7 @@ class UserInterface():
     def run_algorithm(self) -> None:
 
         if self.program.grid.cable_list:
-            self.program.grid.clean_grid()
+            self.program.grid.clean_grid_visualisation()
 
         self.program.execute_algoritm()
 
