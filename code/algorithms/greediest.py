@@ -1,4 +1,5 @@
 import random
+from copy import deepcopy
 from typing import List, Dict
 from copy import copy
 from code.classes.grid import Grid
@@ -6,8 +7,8 @@ from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
-class Greedier():
-    """ Class that implements the greedier algorithm
+class Greediest():
+    """ Class that implements the greediest algorithm
     for the smart grid problem. """
 
     def __init__(self, grid: Grid) -> None:
@@ -16,11 +17,14 @@ class Greedier():
 
         self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
         self.allocated_house_list: List[House] = []
-
+        
     def calculate_solution(self) -> None:
         """ Method that calculates the results of the function. """
 
         cycle_counter = 1
+
+        total_houses = len(self.non_allocated_house_list)   
+        threshold = total_houses * 0.5 # 90% threshold
 
         distance_list = []
         for house in self.non_allocated_house_list:
@@ -31,21 +35,52 @@ class Greedier():
         # Sort the list by distance
         distance_list.sort(key=lambda x: x[0])
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)+1):
+        
+        while len(self.allocated_house_list) != total_houses:
 
+            non_allocated_houses = copy(self.non_allocated_house_list)
             # Iterate over sorted list and make connections
             for distance, house, battery in distance_list:
-
-                if battery.capacity >= house.max_output and house not in self.allocated_house_list:
+                if battery.capacity >= house.max_output and house not in self.allocated_house_list and len(self.allocated_house_list) < threshold:
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
                     self.allocated_house_list.append(house)
+                    non_allocated_houses.remove(house)
+                    print(len(self.allocated_house_list))
+
+            random.shuffle(non_allocated_houses)
+
+            for house in non_allocated_houses:
+                
+                tmp_battery_list: List[Battery] = copy(self.grid.battery_list)
+
+                while len(tmp_battery_list) > 0:
+                    random.shuffle(tmp_battery_list)
+                    battery = tmp_battery_list.pop()
+
+                    if battery.capacity >= house.max_output:
+                        battery.capacity -= house.max_output
+                        battery.house_list.append(house)
+                        house.battery = battery
+                        self.allocated_house_list.append(house)
+                        break
+
+                if len(tmp_battery_list) == 0 and house.battery is None:
+                    cycle_counter += 1
+                    self.grid.clean_grid()
+                    self.allocated_house_list = []
+                    break
+
+
+        print(len(self.allocated_house_list))
+        print(len(self.non_allocated_house_list))
 
         for house in self.allocated_house_list:
             self.draw_path(house.battery, house)
 
         print(f"Solution found in {cycle_counter} cycle(s).")
+
 
     def draw_path(self, battery: Battery, house: House) -> None:
         """ Method that draws a path between the house and battery. """
@@ -86,3 +121,4 @@ class Greedier():
         y_distance = abs(battery.cell.y_index - house.cell.y_index)
 
         return x_distance + y_distance
+    

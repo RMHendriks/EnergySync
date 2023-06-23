@@ -12,6 +12,7 @@ from code.classes.user_interface import UserInterface
 from code.algorithms.random import Random
 from code.algorithms.greedy import Greedy
 from code.algorithms.greedier import Greedier
+from code.algorithms.greediest import Greediest
 
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
@@ -19,7 +20,7 @@ VERTICAL_MARGIN = 50
 HORIZONTAL_MARGIN = 500
 GRID_SIZE = 51
 NEIGHBOURHOOD = "1"
-ITERATIONS = 1
+ITERATIONS = 100
 
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -48,7 +49,7 @@ def main() -> None:
     # calculate a random solution
     start_time_program = time.time()
     for iteration in range(ITERATIONS):
-        algorithm = Greedy(grid)
+        algorithm = Greediest(grid)
         algorithm.calculate_solution()
         cost_list.append(calculate_total_cost(grid))
         print(calculate_total_cost(grid))
