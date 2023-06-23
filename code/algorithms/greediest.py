@@ -47,7 +47,6 @@ class Greediest():
                     house.battery = battery
                     self.allocated_house_list.append(house)
                     non_allocated_houses.remove(house)
-                    print(len(self.allocated_house_list))
 
             random.shuffle(non_allocated_houses)
 
@@ -71,10 +70,6 @@ class Greediest():
                     self.grid.clean_grid()
                     self.allocated_house_list = []
                     break
-
-
-        print(len(self.allocated_house_list))
-        print(len(self.non_allocated_house_list))
 
         for house in self.allocated_house_list:
             self.draw_path(house.battery, house)
