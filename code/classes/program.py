@@ -9,7 +9,7 @@ from code.classes.house import House
 from code.classes.cable import Cable
 from code.classes.grid import Grid
 from code.classes.user_interface import UserInterface
-from code.algorithms.algorithm import Algoritm
+from code.algorithms.algorithm import Algorithm
 from code.algorithms.random import Random
 from code.algorithms.greedy import Greedy
 from code.algorithms.greedier import Greedier
@@ -20,11 +20,12 @@ class Program():
                  screen_height: int, vertical_margin: int,
                  horizontal_margin: int, grid_size: int,
                  neighhourhood: str, iterations: int, battery_cost: int,
-                 cable_cost: int, algorithm: Algoritm) -> None:
+                 cable_cost: int, algorithm_list: List[Algorithm],
+                 algorithm: Algorithm) -> None:
 
         self.visualisation_mode = visualisation_mode
 
-        self.algorithm: Algoritm = algorithm
+        self.algorithm: Algorithm = algorithm
 
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -45,7 +46,7 @@ class Program():
         self.grid = Grid(screen_width, screen_height, grid_size, vertical_margin,
                         horizontal_margin, self.battery_list, self.house_list,
                         self.cable_list)
-        self.algorithm_list: List[Algoritm] = [Random, Greedy, Greedier]
+        self.algorithm_list: List[Algorithm] = algorithm_list
 
         self.delay_timer_ms = 100
         self.update_cooldown_timer = pygame.time.get_ticks()

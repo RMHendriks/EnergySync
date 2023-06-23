@@ -5,20 +5,20 @@ if TYPE_CHECKING:
 
 import pygame
 from typing import List, Dict
-from code.algorithms.algorithm import Algoritm
+from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.button import Button
 from code.classes.text import Text
 
 class UserInterface():
 
-    def __init__(self, program: Program, algoritm_list: List[Algoritm],
+    def __init__(self, program: Program, algoritm_list: List[Algorithm],
                  grid_size: int, vertical_margin: int,
                  horizontal_margin: int) -> None:
         
         self.program = program
 
-        self.algorithm_list: List[Algoritm] = algoritm_list
+        self.algorithm_list: List[Algorithm] = algoritm_list
 
         self.grid_size = grid_size
         self.vertical_margin = vertical_margin // 2
