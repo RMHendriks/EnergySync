@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List
+from code.algorithms.algorithm import Algoritm
 from code.classes.cell import Cell
 from code.classes.battery import Battery
 from code.classes.house import House
@@ -27,7 +28,6 @@ class Grid():
 
         self.grid: List[List[Cell]] = self.make_grid()
 
-        self.delay_timer_ms = 0
 
     def make_grid(self):
         """
