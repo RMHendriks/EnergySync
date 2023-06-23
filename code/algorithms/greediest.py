@@ -2,12 +2,13 @@ import random
 from copy import deepcopy
 from typing import List, Dict
 from copy import copy
+from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
-class Greediest():
+class Greediest(Algorithm):
     """ Class that implements the greediest algorithm
     for the smart grid problem. """
 

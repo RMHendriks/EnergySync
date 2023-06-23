@@ -1,13 +1,13 @@
 import random
 from typing import List
 from copy import copy
-from code.algorithms.algorithm import Algoritm
+from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
-class Random(Algoritm):
+class Random(Algorithm):
     """ class that generates a random solution
     for the smart grid problem. """
 

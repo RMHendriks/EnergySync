@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import List
-from code.algorithms.algorithm import Algoritm
 from code.classes.cell import Cell
 from code.classes.battery import Battery
 from code.classes.house import House

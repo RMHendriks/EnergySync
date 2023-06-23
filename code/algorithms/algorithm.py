@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-class Algoritm(ABC):
+class Algorithm(ABC):
     
     @abstractmethod
     def __init__(self) -> None:
