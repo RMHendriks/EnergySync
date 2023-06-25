@@ -5,8 +5,8 @@ class Button():
     """ Class that contains the UI button. """
     
     def __init__(self, x: int, y: int, event: Callable, width=200, height=75,
-                 background_color=pygame.Color("grey"),
-                 text="PLACEHOLDER") -> None:
+                 background_color=pygame.Color("grey"), font="agencyfb",
+                 font_size=25, text="PLACEHOLDER") -> None:
         """ Initializes an UI button. x and y as positions on the screen, event as
         function that will get called when the button gets clicked on, width and height
         for the button size, background_color as a pygame.Color for the color of the button
@@ -17,7 +17,7 @@ class Button():
         self.text_content = text
         self.event_function = event
         
-        self.font = pygame.font.SysFont('agencyfb', 25)
+        self.font = pygame.font.SysFont(font, font_size)
         self.background_color = background_color
         self.background_hover_color = pygame.Color("grey80")
 

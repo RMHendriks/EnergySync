@@ -9,27 +9,31 @@ from code.algorithms.greedy_shared import GreedyShared
 
 VISUALISATION_MODE = True
 
+# visualisation mode settings
 SCREEN_WIDTH = 1020
 SCREEN_HEIGHT = 1020
 VERTICAL_MARGIN = 50
 HORIZONTAL_MARGIN = 500
-GRID_SIZE = 51
-NEIGHBOURHOOD = "1"
-ITERATIONS = 100
-
-BATTERY_COST = 5000
-CABLE_COST = 9
-
 ALGORITHM_LIST: List[Algorithm] = [Random, Greedy, Greedier, Greediest,
                                    GreedyShared]
+NEIGHBOURHOOD_LIST: List[str] = ["1", "2", "3"]
+
+# console mode settings
+ITERATIONS = 100
+
+# Shared settings
+GRID_SIZE = 51
+BATTERY_COST = 5000
+CABLE_COST = 9
 ALGORITHM: Algorithm = GreedyShared
+NEIGHBOURHOOD = "1"
 
 
 def main() -> None:
     program = Program(VISUALISATION_MODE, SCREEN_WIDTH, SCREEN_HEIGHT,
                       VERTICAL_MARGIN, HORIZONTAL_MARGIN, GRID_SIZE,
-                      NEIGHBOURHOOD, ITERATIONS, BATTERY_COST, CABLE_COST,
-                      ALGORITHM_LIST, ALGORITHM)
+                      NEIGHBOURHOOD_LIST, NEIGHBOURHOOD, ITERATIONS,
+                      BATTERY_COST, CABLE_COST, ALGORITHM_LIST, ALGORITHM)
     program.run()
 
 if __name__ == "__main__":

@@ -19,9 +19,9 @@ class Program():
     def __init__(self, visualisation_mode: bool, screen_width: int,
                  screen_height: int, vertical_margin: int,
                  horizontal_margin: int, grid_size: int,
-                 neighhourhood: str, iterations: int, battery_cost: int,
-                 cable_cost: int, algorithm_list: List[Algorithm],
-                 algorithm: Algorithm) -> None:
+                 neighhourhood_list: List[str], neighhourhood: str,
+                 iterations: int, battery_cost: int, cable_cost: int,
+                 algorithm_list: List[Algorithm], algorithm: Algorithm) -> None:
 
         self.visualisation_mode = visualisation_mode
 
@@ -49,8 +49,10 @@ class Program():
                         horizontal_margin, self.battery_list, self.house_list,
                         self.cable_list)
         self.algorithm_list: List[Algorithm] = algorithm_list
+        self.neighhourhood_list: List[str] = neighhourhood_list
 
-        self.delay_timer_ms = 100
+        self.delay_timer_ms = 20
+        self.pause = False
         self.update_cooldown_timer = pygame.time.get_ticks()
         self.house_index = 0
         self.cable_index = 0
@@ -110,8 +112,8 @@ class Program():
         self.load_sprites()
 
         # load the ui
-        user_interface = UserInterface(self, self.algorithm_list,
-                                       self.screen_width, self.vertical_margin,
+        user_interface = UserInterface(self, self.screen_width,
+                                       self.vertical_margin,
                                        self.horizontal_margin)
 
         while running:
@@ -211,7 +213,8 @@ class Program():
     def update_objects(self) -> None:
         """"" Draws a cable every delay_timer_ms ms. """
         
-        if (pygame.time.get_ticks() - self.update_cooldown_timer >
+        # draw objects when not paused and the delay timer ms have passed
+        if not self.pause and (pygame.time.get_ticks() - self.update_cooldown_timer >
             self.delay_timer_ms):
             for cable in self.house_cable_iter_list:
 
@@ -280,6 +283,22 @@ class Program():
             copied_cable_list.append(Cable(cell, battery, house))
 
         return copied_cable_list
+
+    def swap_neighbourhood(self) -> None:
+        """ Changes the grid and loads a new neighbourhood. Clears all lists
+        and loads them with the data of the new neighbourhoods. """
+
+        self.battery_list = []
+        self.house_list = []
+        self.cable_list = []
+        self.house_cable_iter_list = []
+        self.highlight_cable_list = []
+        self.import_neighbourhood()
+        self.grid = Grid(self.screen_width, self.screen_height, self.grid_size,
+                         self.vertical_margin, self.horizontal_margin,
+                         self.battery_list, self.house_list, self.cable_list)
+        self.grid.assign_connections()
+        self.load_sprites()
 
     def generate_output(self) -> None:
         """ Generate a JSON output for the solution of the case. """
