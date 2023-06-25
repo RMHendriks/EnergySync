@@ -17,6 +17,7 @@ class House():
         
         self.battery: Optional[Battery] = None
         self.cable_list: List[Cable] = []
+        self.shared_cable_list: List[Cable] = []
 
         self.sprite = self.load_sprite()
 

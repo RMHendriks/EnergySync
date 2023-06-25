@@ -6,6 +6,8 @@ if TYPE_CHECKING:
 import pygame
 from typing import List
 from code.classes.house import House
+from code.classes.cable import Cable
+
 
 class Battery():
     def __init__(self, cell: Cell, capacity: float) -> None:
@@ -15,6 +17,7 @@ class Battery():
         self.capacity = capacity
 
         self.house_list: List[House] = []
+        self.cable_list: List[Cable] = []
 
         self.sprite = self.load_sprite()
 

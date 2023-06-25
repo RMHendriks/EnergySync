@@ -32,7 +32,7 @@ class Cell():
         self.house: Optional[House] = None
         self.cable_list: List[Cable] = []
 
-        self.sprite:  Optional[pygame.surface.Surface] = None
+        self.sprite: Optional[pygame.surface.Surface] = None
 
     def draw(self, window: pygame.surface.Surface) -> None:
         """ Draw cell to the screen. """

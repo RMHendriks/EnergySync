@@ -2,8 +2,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from code.classes.cell import Cell
+    from code.classes.battery import Battery
 
-from code.classes.battery import Battery
 from code.classes.house import House
 
 class Cable():
@@ -13,3 +13,6 @@ class Cable():
 
         self.battery: Battery = battery
         self.house: House = house
+
+    def __repr__(self) -> str:
+        return f"Cable: {self.cell.x_index}, {self.cell.y_index}"

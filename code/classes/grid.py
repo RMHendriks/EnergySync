@@ -63,11 +63,16 @@ class Grid():
 
         for battery in self.battery_list:
             battery.house_list = []
+            battery.cable_list = []
             battery.capacity = battery.max_capacity
 
         for house in self.house_list:
             house.battery = None
             house.cable_list = []
+
+        for row in self.grid:
+            for cell in row:
+                cell.cable_list = []
     
     def clean_grid_visualisation(self) -> None:
         """ Clean the grid from all house/battery assignments and cables for
@@ -77,6 +82,7 @@ class Grid():
 
         for battery in self.battery_list:
             battery.house_list = []
+            battery.cable_list = []
             battery.capacity = battery.max_capacity
 
         for house in self.house_list:
@@ -86,6 +92,7 @@ class Grid():
 
         for row in self.grid:
             for cell in row:
+                cell.cable_list = []
                 cell.connections.clear_connections()
                 cell.load_sprite()
 

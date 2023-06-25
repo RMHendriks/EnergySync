@@ -41,6 +41,7 @@ class Program():
         self.battery_list: List[Battery] = []
         self.house_list: List[House] = []
         self.cable_list: List[Cable] = []
+        self.allocated_house_list: List[House] = []
         self.house_cable_iter_list: List[Cable] = []
         self.highlight_cable_list: List[Cable] = []
 
@@ -173,15 +174,15 @@ class Program():
     def execute_algoritm(self) -> None:
         """ Excutes the algoritm (needs to use an empty grid). """
 
-        algorithm = self.algorithm(self.grid)
+        algorithm: Algorithm = self.algorithm(self.grid)
         algorithm.calculate_solution()
 
         if self.visualisation_mode:
-            self.house_index = 0
-            self.house_cable_iter_list = iter(self.grid.house_list[self.house_index].cable_list)
-            self.highlight_cable_list = self.copy_cable_list()
+            self.allocated_house_list = algorithm.allocated_house_list
             self.house_index = 0
             self.cable_index = 0
+            self.house_cable_iter_list = iter(self.allocated_house_list[self.house_index].cable_list)
+            self.highlight_cable_list = self.copy_cable_list()
 
     def draw(self, window: pygame.surface.Surface, user_interface: UserInterface) -> None:
         """ Draw objects to the screen every frame. """
@@ -213,24 +214,28 @@ class Program():
         if (pygame.time.get_ticks() - self.update_cooldown_timer >
             self.delay_timer_ms):
             for cable in self.house_cable_iter_list:
-                if self.cable_index < len(self.grid.house_list[self.house_index].cable_list) - 1:
+
+                if self.cable_index < len(self.allocated_house_list[self.house_index].cable_list) - 1:
 
                     # draws a regular (blue) cable
-                    next_cell = self.grid.house_list[self.house_index].cable_list[self.cable_index + 1]
+                    next_cell = self.allocated_house_list[self.house_index].cable_list[self.cable_index + 1]
                     cable.cell.assign_connection(next_cell)
     
                     # draws a highlighted (red) cable 
                     next_highlight_cell = self.highlight_cable_list[self.cable_index + 1]
                     self.highlight_cable_list[self.cable_index].cell.assign_connection(next_highlight_cell)
 
+
                 # load the correct sprites for the regular and highlighted cable
-                cable.cell.load_sprite()
-                self.highlight_cable_list[self.cable_index].cell.load_sprite(highlight_sprite=True)
+                # don't draw the cable if it's already on the destanation
+                if len(self.allocated_house_list[self.house_index].cable_list) > 1:
+                    cable.cell.load_sprite()
+                    self.highlight_cable_list[self.cable_index].cell.load_sprite(highlight_sprite=True)
 
 
-                if cable == self.grid.house_list[self.house_index].cable_list[-1]:
+                if cable == self.allocated_house_list[self.house_index].cable_list[-1]:
                     self.house_index += 1
-                    if self.house_index >= len(self.grid.house_list):
+                    if self.house_index >= len(self.allocated_house_list):
                         # empties the list to stop iteration when everything
                         # has been drawn
                         self.house_cable_iter_list = []
@@ -240,7 +245,7 @@ class Program():
                     else:
                         # resets the cable list for the next house
                         self.highlight_cable_list = self.copy_cable_list()
-                        self.house_cable_iter_list = iter(self.grid.house_list[self.house_index].cable_list)
+                        self.house_cable_iter_list = iter(self.allocated_house_list[self.house_index].cable_list)
                         self.cable_index = 0
                         cable.house.load_sprite_connected()
                         break
@@ -267,7 +272,7 @@ class Program():
 
         copied_cable_list = []
 
-        for cable in self.grid.house_list[self.house_index].cable_list:
+        for cable in self.allocated_house_list[self.house_index].cable_list:
             cell = Cell(cable.cell.grid, cable.cell.x, cable.cell.y,
                         cable.cell.size, cable.cell.x_index, cable.cell.y_index)
             battery = cable.cell.battery
