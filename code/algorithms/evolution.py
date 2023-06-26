@@ -19,10 +19,15 @@ class Evolution():
         self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
         self.allocated_house_list: List[House] = []
         
-    def calculate_solution(self) -> None:
-        """ Method that calculates the results of the function. """
+    def generate_solution(self) -> None:
+        """ Method that generates a random valid solution to the grid. """
 
+    def generate_population(self) -> None:
+        """ Method that generates a random population of solutions. """
 
+    def fitness(self) -> None:
+        """ Method that takes a solution and calculates how well it performs. """
+    
     def draw_path(self, battery: Battery, house: House) -> None:
         """ Method that draws a path between the house and battery. """
 
