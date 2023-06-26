@@ -96,6 +96,7 @@ class Program():
                 house_object = House(cell, float(house[2]))
                 cell.house = house_object
                 self.house_list.append(house_object)
+                self.grid.non_allocated_house_list.append(house_object)
 
     def run_visualisation_mode(self) -> None:
         """ Runs the pygame visualisation. """

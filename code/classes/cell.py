@@ -7,7 +7,8 @@ if TYPE_CHECKING:
     from code.classes.cable import Cable
 
 import pygame
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
+from copy import copy, deepcopy
 from code.classes.connection import Connection
 
 
@@ -72,6 +73,14 @@ class Cell():
         elif next_cell_index[1] < cell_index[1]:
             self.connections.bottom = True
             next_cable.cell.connections.top = True
+
+    def __deepcopy__(self, memo: Dict) -> Cell:
+        new_cell = Cell(self.grid, self.x, self.y, self.size, self.x_index,
+                        self.y_index)
+        new_cell.cable_list = copy(self.cable_list)
+        new_cell.house = copy(self.house)
+        new_cell.battery = deepcopy(self.battery)
+        return new_cell
 
     def __str__(self) -> str:  
         """ Return the index of the cell. """

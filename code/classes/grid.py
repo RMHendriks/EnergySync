@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import List
+from copy import deepcopy, copy
 from code.classes.cell import Cell
 from code.classes.battery import Battery
 from code.classes.house import House
@@ -25,6 +26,11 @@ class Grid():
         self.battery_list: List[Battery] = battery_list
         self.house_list: List[House] = house_list
         self.cable_list: List[Cable] = cable_list
+
+        self.non_allocated_house_list: List[House] = []
+        self.allocated_house_list: List[House] = []
+
+        self.lookahead_battery_list: List[Battery] = []
 
         self.grid: List[List[Cell]] = self.make_grid()
 
@@ -55,11 +61,17 @@ class Grid():
 
         return self.grid[x][y]
     
+    def get_battery_by_index(self, x_index: int, y_index: int) -> Battery:
+
+        return self.grid[x_index][y_index].battery
+    
     def clean_grid(self) -> None:
         """ Clean the grid from all house/battery assignments and cables for
         console mode. """
         
         self.cable_list = []
+        self.non_allocated_house_list = copy(self.house_list)
+        self.allocated_house_list = []
 
         for battery in self.battery_list:
             battery.house_list = []
@@ -79,6 +91,8 @@ class Grid():
         visualisation mode. """
 
         self.cable_list = []
+        self.non_allocated_house_list = copy(self.house_list)
+        self.allocated_house_list = []
 
         for battery in self.battery_list:
             battery.house_list = []
@@ -143,3 +157,6 @@ class Grid():
 
         else:
             raise StopIteration
+    
+    def __str__(self) -> str:
+        return f"Grid with {len(self.cable_list)} cable(s)"

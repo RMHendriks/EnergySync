@@ -1,6 +1,6 @@
 import random
 from typing import List, Dict
-from copy import copy
+from copy import copy, deepcopy
 from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.cell import Cell
@@ -15,6 +15,7 @@ class GreedyShared(Algorithm):
     def __init__(self, grid: Grid) -> None:
         
         self.grid: Grid = grid
+        self.copy_grid = deepcopy(grid)
 
         self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
         self.allocated_house_list: List[House] = []

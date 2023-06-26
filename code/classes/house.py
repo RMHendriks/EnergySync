@@ -6,7 +6,8 @@ if TYPE_CHECKING:
     from code.classes.cable import Cable
 
 import pygame
-from typing import List, Optional
+from typing import List, Optional, Dict
+from copy import copy, deepcopy
 
 
 class House():
@@ -42,5 +43,13 @@ class House():
         self.sprite = pygame.transform.scale(sprite, (self.cell.size * 1,
                                              self.cell.size * 1))
 
+    def __deepcopy__(self, memo: Dict) -> House:
+
+        new_house = House(copy(self.cell), self.max_output)
+        new_house.battery = deepcopy(self.battery)
+        new_house.cable_list = copy(self.cable_list)
+        self.sprite = None
+        return new_house
+    
     def __repr__(self) -> str:
         return f"{self.cell.x}, {self.cell.y}"
