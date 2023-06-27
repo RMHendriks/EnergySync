@@ -74,7 +74,7 @@ class GreedyShared(Algorithm):
                     self.grid.clean_grid()
                     self.allocated_house_list = []
                     break
-
+        print(len(self.grid.cable_list))
         print(f"Solution found in {cycle_counter} cycle(s).")
 
     def draw_path(self, start_cell: Cell, end_cell: Cell, battery: Battery,
