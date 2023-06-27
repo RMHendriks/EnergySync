@@ -52,4 +52,4 @@ class House():
         return new_house
     
     def __repr__(self) -> str:
-        return f"{self.cell.x}, {self.cell.y}"
+        return f"House: {self.cell.x}, {self.cell.y}"

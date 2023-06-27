@@ -30,8 +30,6 @@ class Grid():
         self.non_allocated_house_list: List[House] = []
         self.allocated_house_list: List[House] = []
 
-        self.lookahead_battery_list: List[Battery] = []
-
         self.grid: List[List[Cell]] = self.make_grid()
 
 
@@ -61,9 +59,27 @@ class Grid():
 
         return self.grid[x][y]
     
-    def get_battery_by_index(self, x_index: int, y_index: int) -> Battery:
+    def get_cell_by_object(self, cell: Cell) -> Cell:
+        """ Gets the index of a cell. """
+
+        x_index = cell.x_index
+        y_index = cell.y_index
+
+        return self.grid[x_index][y_index]
+    
+    def get_battery_by_object(self, battery: Battery) -> Battery:
+
+        x_index = battery.cell.x_index
+        y_index = battery.cell.y_index
 
         return self.grid[x_index][y_index].battery
+    
+    def get_house_by_object(self, house: House) -> House:
+
+        x_index = house.cell.x_index
+        y_index = house.cell.y_index
+
+        return self.grid[x_index][y_index].house
     
     def clean_grid(self) -> None:
         """ Clean the grid from all house/battery assignments and cables for
@@ -160,3 +176,21 @@ class Grid():
     
     def __str__(self) -> str:
         return f"Grid with {len(self.cable_list)} cable(s)"
+
+    def __deepcopy__(self, memo={}):
+        # Create new instances of the lists and objects
+        battery_list = deepcopy(self.battery_list, memo)
+        house_list = deepcopy(self.house_list, memo)
+        cable_list = deepcopy(self.cable_list, memo)
+        
+        # Create a new instance of the Grid class with the copied attributes
+        copied_grid = Grid(self.screen_width, self.screen_height, self.grid_size,
+                           self.vertical_spacing, self.horizontal_spacing,
+                           battery_list, house_list, cable_list)
+
+        # Copy the remaining attributes
+        copied_grid.non_allocated_house_list = deepcopy(self.non_allocated_house_list, memo)
+        copied_grid.allocated_house_list = deepcopy(self.allocated_house_list, memo)
+        copied_grid.grid = deepcopy(self.grid, memo)
+
+        return copied_grid

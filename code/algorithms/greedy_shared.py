@@ -15,21 +15,22 @@ class GreedyShared(Algorithm):
     def __init__(self, grid: Grid) -> None:
         
         self.grid: Grid = grid
-        self.copy_grid = deepcopy(grid)
 
-        self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
-        self.allocated_house_list: List[House] = []
-
-    def calculate_solution(self) -> None:
+    def calculate_solution(self, subtract_total_houses=0) -> None:
         """ Method that calculates the results of the function. """
 
         cycle_counter = 1
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)):
+        while(len(self.grid.house_list) - subtract_total_houses > len(self.grid.allocated_house_list)):
 
-            random.shuffle(self.non_allocated_house_list)
+            if subtract_total_houses > 0:
+                house_list = self.grid.house_list[:-subtract_total_houses]
+            else:
+                house_list = self.grid.house_list
+            random.shuffle(house_list)
 
-            for house in self.non_allocated_house_list:
+            for house in house_list:
+                print(f"House: {house_list.index(house) + 1}")
                 
                 battery_dict: Dict[Battery, int] = {}
                 cable_dict: Dict[Cable, int] = {}
@@ -60,22 +61,25 @@ class GreedyShared(Algorithm):
                     cable.battery.capacity -= house.max_output
                     cable.battery.house_list.append(house)
                     house.battery = cable.battery
-                    self.allocated_house_list.append(house)
+                    self.grid.allocated_house_list.append(house)
+                    self.grid.non_allocated_house_list.pop(0)
                     self.draw_path(house.cell, cable.cell, cable.battery, house)
                 elif battery_dict:
                     battery: Battery = min(battery_dict, key=battery_dict.get)
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
-                    self.allocated_house_list.append(house)
+                    self.grid.allocated_house_list.append(house)
+                    self.grid.non_allocated_house_list.pop(0)
                     self.draw_path(house.cell, battery.cell, battery, house)
                 else:
                     cycle_counter += 1
                     self.grid.clean_grid()
-                    self.allocated_house_list = []
+                    self.grid.allocated_house_list = []
                     break
-        print(len(self.grid.cable_list))
-        print(f"Solution found in {cycle_counter} cycle(s).")
+        
+        if subtract_total_houses == 0:
+            print(f"Solution found in {cycle_counter} cycle(s).")
 
     def draw_path(self, start_cell: Cell, end_cell: Cell, battery: Battery,
                   house: House) -> None:

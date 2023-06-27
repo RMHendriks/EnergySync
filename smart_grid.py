@@ -27,7 +27,7 @@ ITERATIONS = 1
 GRID_SIZE = 51
 BATTERY_COST = 5000
 CABLE_COST = 9
-ALGORITHM: Algorithm = GreedyShared
+ALGORITHM: Algorithm = Evolution
 NEIGHBOURHOOD = "1"
 
 
