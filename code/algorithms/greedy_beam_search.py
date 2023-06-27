@@ -4,55 +4,12 @@ from typing import List, Dict
 from copy import copy, deepcopy
 from code.algorithms.algorithm import Algorithm
 from code.algorithms.greedy_shared import GreedyShared
+from code.classes.program import Program
 from code.classes.grid import Grid
 from code.classes.cell import Cell
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
-
-
-class State():
-    """ Class used for the storage of a grid state and extra info about
-    the state. """
-
-    def __init__(self, grid: Grid, grid_gen=0,
-                 battery_dict: Dict[int, Battery]={},
-                 end_cell_dict: Dict[int, Cell]={}) -> None:
-        
-        self.grid: Grid = grid
-
-        self.grid_gen = grid_gen
-        self.battery_history_dict: Dict[int, Battery] = battery_dict
-        self.end_cell_history_dict: Dict[int, Battery] = end_cell_dict
-        self.total_cables = len(grid.cable_list)
-        self.total_assigned_houses = len(grid.allocated_house_list)
-        self.total_non_assigned_houses = len(grid.non_allocated_house_list)
-
-    def update(self) -> None:
-        """ Update the stats of the instance acording to the grid. """
-
-        self.total_cables = len(self.grid.cable_list)
-        self.total_assigned_houses = len(self.grid.allocated_house_list)
-        self.total_non_assigned_houses = len(self.grid.non_allocated_house_list)
-
-    def add_battery(self, depth: int, battery: Battery) -> None:
-        """ Adds a battery to the battery history dict"""
-
-        self.battery_history_dict[depth] = battery
-
-    def add_cell(self, depth: int, cell: Cell) -> None:
-        """ Adds a cell to the cell history dict"""
-
-        self.end_cell_history_dict[depth] = cell
-
-    def __str__(self) -> str:
-        
-        return (f"Grid gen:                {self.grid_gen}\n" +
-                f"Battery dict:            {self.battery_history_dict}\n" + 
-                f"End Cell dict:           {self.end_cell_history_dict}\n" +
-                f"Total cables:            {self.total_cables}\n" +
-                f"Total assigned houses:   {self.total_assigned_houses}\n" +
-                f"Total unassigned houses: {self.total_non_assigned_houses}\n")
 
 class GreedyBeamSearch(Algorithm):
     """ Class that implements the greedy algorithm
@@ -62,21 +19,24 @@ class GreedyBeamSearch(Algorithm):
         
         self.grid: Grid = grid
 
+        # decide how may houses (out of 150) that are being run by this algorithm
+        # all houses up to this point will be allocated with a greedy algorithm
+        self.total_house_algorithm = 25
+        self.beam_width = 5
+        self.lookahead_depth = 10
+
     def calculate_solution(self) -> None:
         """ Method that calculates the results of the function. """
 
         cycle_counter = 1
-        total_house_algorithm = 150
-        beam_width = 1
-        lookahead_depth = 150
 
         while(len(self.grid.house_list) != len(self.grid.allocated_house_list)):
 
 
             starting_algoritm = GreedyShared(self.grid)
-            starting_algoritm.calculate_solution(total_house_algorithm)
+            starting_algoritm.calculate_solution(self.total_house_algorithm)
 
-            extra_house_list = self.grid.house_list[-total_house_algorithm:]
+            extra_house_list = self.grid.house_list[-self.total_house_algorithm:]
             
             random.shuffle(extra_house_list)
             self.grid.non_allocated_house_list = copy(extra_house_list)
@@ -85,10 +45,10 @@ class GreedyBeamSearch(Algorithm):
                 print(f"House: {extra_house_list.index(house) + 1}")
 
                 states: List[State] = [State(deepcopy(self.grid))]
-                if lookahead_depth > len(self.grid.non_allocated_house_list):
-                    lookahead_depth = len(self.grid.non_allocated_house_list)
+                if self.lookahead_depth > len(self.grid.non_allocated_house_list):
+                    self.lookahead_depth = len(self.grid.non_allocated_house_list)
 
-                for depth in range(lookahead_depth):
+                for depth in range(self.lookahead_depth):
                     
                     next_gen_states: List[State] = []
 
@@ -131,9 +91,9 @@ class GreedyBeamSearch(Algorithm):
                                 next_gen_states.append(child_state)
 
                     # Prune the results to match the beam size
-                    if len(next_gen_states) > beam_width:
+                    if len(next_gen_states) > self.beam_width:
                         next_gen_states.sort(key=lambda x: x.total_cables)
-                        next_gen_states = next_gen_states[:beam_width]
+                        next_gen_states = next_gen_states[:self.beam_width]
 
                     states = next_gen_states
                 
@@ -236,3 +196,47 @@ class GreedyBeamSearch(Algorithm):
                 return cable.house.cable_list[cable_index + 1:]
             
         Exception("Could not find a valid connection")
+
+
+class State():
+    """ Class used for the storage of a grid state and extra info about
+    the state. """
+
+    def __init__(self, grid: Grid, grid_gen=0,
+                 battery_dict: Dict[int, Battery]={},
+                 end_cell_dict: Dict[int, Cell]={}) -> None:
+        
+        self.grid: Grid = grid
+
+        self.grid_gen = grid_gen
+        self.battery_history_dict: Dict[int, Battery] = battery_dict
+        self.end_cell_history_dict: Dict[int, Battery] = end_cell_dict
+        self.total_cables = len(grid.cable_list)
+        self.total_assigned_houses = len(grid.allocated_house_list)
+        self.total_non_assigned_houses = len(grid.non_allocated_house_list)
+
+    def update(self) -> None:
+        """ Update the stats of the instance acording to the grid. """
+
+        self.total_cables = len(self.grid.cable_list)
+        self.total_assigned_houses = len(self.grid.allocated_house_list)
+        self.total_non_assigned_houses = len(self.grid.non_allocated_house_list)
+
+    def add_battery(self, depth: int, battery: Battery) -> None:
+        """ Adds a battery to the battery history dict"""
+
+        self.battery_history_dict[depth] = battery
+
+    def add_cell(self, depth: int, cell: Cell) -> None:
+        """ Adds a cell to the cell history dict"""
+
+        self.end_cell_history_dict[depth] = cell
+
+    def __str__(self) -> str:
+        
+        return (f"Grid gen:                {self.grid_gen}\n" +
+                f"Battery dict:            {self.battery_history_dict}\n" + 
+                f"End Cell dict:           {self.end_cell_history_dict}\n" +
+                f"Total cables:            {self.total_cables}\n" +
+                f"Total assigned houses:   {self.total_assigned_houses}\n" +
+                f"Total unassigned houses: {self.total_non_assigned_houses}\n")

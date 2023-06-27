@@ -16,12 +16,11 @@ from code.algorithms.algorithm import Algorithm
 
 class Program():
 
-    def __init__(self, visualisation_mode: bool, screen_width: int,
-                 screen_height: int, vertical_margin: int,
-                 horizontal_margin: int, grid_size: int,
-                 neighhourhood_list: List[str], neighhourhood: str,
-                 iterations: int, battery_cost: int, cable_cost: int,
-                 algorithm_list: List[Algorithm], algorithm: Algorithm) -> None:
+    def __init__(self, neighhourhood: str, iterations: int, algorithm: Algorithm,
+                 visualisation_mode=False, screen_width=1020, screen_height=1020,
+                 vertical_margin=0, horizontal_margin=0, grid_size=51,
+                 neighhourhood_list:List[str]=[], battery_cost=5000, cable_cost=9,
+                 algorithm_list:List[Algorithm]=[]) -> None:
 
         self.visualisation_mode = visualisation_mode
 

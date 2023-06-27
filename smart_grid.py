@@ -32,10 +32,10 @@ NEIGHBOURHOOD = "1"
 
 
 def main() -> None:
-    program = Program(VISUALISATION_MODE, SCREEN_WIDTH, SCREEN_HEIGHT,
-                      VERTICAL_MARGIN, HORIZONTAL_MARGIN, GRID_SIZE,
-                      NEIGHBOURHOOD_LIST, NEIGHBOURHOOD, ITERATIONS,
-                      BATTERY_COST, CABLE_COST, ALGORITHM_LIST, ALGORITHM)
+    program = Program(NEIGHBOURHOOD, ITERATIONS, ALGORITHM, VISUALISATION_MODE,
+                      SCREEN_WIDTH, SCREEN_HEIGHT, VERTICAL_MARGIN,
+                      HORIZONTAL_MARGIN, GRID_SIZE, NEIGHBOURHOOD_LIST,
+                      BATTERY_COST, CABLE_COST, ALGORITHM_LIST)
     program.run()
 
 if __name__ == "__main__":

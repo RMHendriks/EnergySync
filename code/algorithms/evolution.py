@@ -24,7 +24,7 @@ class Evolution():
         self.max_population: int = 10 # Population size
         self.total_houses = len(self.non_allocated_house_list)
         
-    def generate_solution(self) -> None:
+    def generate_solution(self) -> Grid:
         """ Method that calculates the results of the function. """
 
         self.grid.clean_grid()
@@ -82,7 +82,7 @@ class Evolution():
                     self.allocated_house_list = []                    
                     break
 
-        print(f"Solution found in {cycle_counter} cycle(s).")
+        # print(f"Solution found in {cycle_counter} cycle(s).")
         return deepcopy(self.grid)
 
 
@@ -93,9 +93,9 @@ class Evolution():
             # Generate 10 solutions
             for _ in range(self.max_population):
                 solution = self.generate_solution()
-                print(solution)
+                # print(solution)
                 fitness = self.fitness(solution)
-                print(fitness)
+                print(fitness * 9 + 25000)
                 self.population.append((fitness, solution))
 
         else:
@@ -108,14 +108,14 @@ class Evolution():
             for _ in range(8):
                 mutated_solution = self.mutate(deepcopy(best_solution[1]))
                 fitness = self.fitness(mutated_solution)
-                print(fitness)
+                print(fitness * 9 + 25000)
                 self.population.append((fitness, mutated_solution))
 
             # Generate 2 new random solutions
             for _ in range(2):
                 solution = self.generate_solution()
                 fitness = self.fitness(solution)
-                print(fitness)
+                print(fitness * 9 + 25000)
                 self.population.append((fitness, solution))
 
     def fitness(self, grid: Grid) -> int:
@@ -147,7 +147,7 @@ class Evolution():
             self.generate_population()
             # Check if we have a solution with high enough fitness
             self.population.sort(key=lambda x: x[0], reverse=False) # Sort by fitness, high to low
-            print(self.population[0][0])
+            # print(self.population[0][0])
             if self.population[0][0] < fitness_threshold:
                 break
         return self.population[0][1] # Return the grid of the best solution
