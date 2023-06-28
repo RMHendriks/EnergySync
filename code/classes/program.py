@@ -326,15 +326,11 @@ class Program():
         """ Changes the grid and loads a new neighbourhood. Clears all lists
         and loads them with the data of the new neighbourhoods. """
 
-        self.battery_list = []
-        self.house_list = []
-        self.cable_list = []
         self.house_cable_iter_list = []
         self.highlight_cable_list = []
-        self.import_neighbourhood()
         self.grid = Grid(self.screen_width, self.screen_height, self.grid_size,
-                         self.vertical_margin, self.horizontal_margin,
-                         self.battery_list, self.house_list, self.cable_list)
+                         self.vertical_margin, self.horizontal_margin)
+        self.import_neighbourhood()
         self.grid.assign_connections()
         self.load_sprites()
 
