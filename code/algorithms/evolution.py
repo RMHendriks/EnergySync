@@ -18,7 +18,7 @@ class Evolution(Algorithm):
         
         self.grid: Grid = grid
 
-        self.fitness_threshold = 830
+        self.fitness_threshold = 900
         self.population: List[Tuple[int, Grid]] = [] # population of solutions with corresponding fitness
         self.max_population: int = 10 # Population size
         self.total_houses = len(self.grid.non_allocated_house_list)
@@ -28,62 +28,9 @@ class Evolution(Algorithm):
 
         self.grid.clean_grid()
         self.grid.allocated_house_list = []
-
-        cycle_counter = 1
-
-        while(self.total_houses != len(self.grid.allocated_house_list)):
-
-            random.shuffle(self.grid.non_allocated_house_list)
-
-            for house in self.grid.non_allocated_house_list:
-                
-                battery_dict: Dict[Battery, int] = {}
-                cable_dict: Dict[Cable, int] = {}
-
-                # fill the dicts with possible connections and their distance
-                for battery in self.grid.battery_list:
-                    if battery.capacity >= house.max_output:
-                        distance = self.calculate_distance(house.cell,
-                                                           battery.cell)
-                        battery_dict[battery] = distance
-
-                        for cable in battery.cable_list:
-                            distance = self.calculate_distance(house.cell,
-                                                               cable.cell)
-                            cable_dict[cable] = distance
-                
-                # if there are valid batteries and cables, get the shortest
-                # connection of both
-                if battery_dict and cable_dict:
-                    battery_min_distance = min(battery_dict.values())
-                    cable_min_dinstance = min(cable_dict.values())
-
-                # connect the cable based on the shortest distance to a cable
-                # or directly to a battery
-                if (cable_dict and battery_dict and
-                   cable_min_dinstance < battery_min_distance):
-                    cable: Cable = min(cable_dict, key=cable_dict.get)
-                    cable.battery.capacity -= house.max_output
-                    cable.battery.house_list.append(house)
-                    house.battery = cable.battery
-                    self.grid.allocated_house_list.append(house)
-                    self.draw_path(house.cell, cable.cell, cable.battery, house)
-                elif battery_dict:
-                    battery: Battery = min(battery_dict, key=battery_dict.get)
-                    battery.capacity -= house.max_output
-                    battery.house_list.append(house)
-                    house.battery = battery
-                    self.grid.allocated_house_list.append(house)
-                    self.draw_path(battery.cell, house.cell, battery, house)
-                else:
-                    cycle_counter += 1
-                    self.grid.clean_grid()
-                    self.grid.allocated_house_list = []                    
-                    break
-
-        # print(f"Solution found in {cycle_counter} cycle(s).")
+        self.generate_greedy_solution(self.grid)
         return deepcopy(self.grid)
-
+    
 
     def generate_population(self) -> None:
         """ Method that generates a random population of solutions. """
@@ -106,15 +53,17 @@ class Evolution(Algorithm):
             # Mutate best solution 8 times and add new solutions to the population
             for _ in range(8):
                 mutated_solution = self.mutate(deepcopy(best_solution[1]))
+                print("MUTATED SOLUTION: ", mutated_solution)
                 fitness = self.fitness(mutated_solution)
-                print(fitness * 9 + 25000)
+                print(fitness)
                 self.population.append((fitness, mutated_solution))
 
             # Generate 2 new random solutions
             for _ in range(2):
                 solution = self.generate_solution()
+                print("RANDOM SOLUTION: ", solution)
                 fitness = self.fitness(solution)
-                print(fitness * 9 + 25000)
+                print(fitness)
                 self.population.append((fitness, solution))
 
     def fitness(self, grid: Grid) -> int:
@@ -125,16 +74,16 @@ class Evolution(Algorithm):
     def mutate(self, grid: Grid) -> Grid:
         """ Method that takes a solution and alters it"""
         houses = random.sample(grid.house_list, len(grid.house_list) // 2) # Select half of houses
+        print(len(houses))
+        print(len(grid.house_list))
         for house in houses:
             # Remove the house-battery connection
+            for cable in house.cable_list:
+                self.remove_cable(cable)
             house.cell.battery = None
             house.battery.capacity += house.max_output
             house.battery = None
-        # Reassign these houses to batteries
-        for house in houses:
-            battery = random.choice(grid.battery_list)
-            if house.max_output <= battery.capacity:
-                battery.capacity -= house.max_output
+
         return grid
 
 
@@ -148,7 +97,8 @@ class Evolution(Algorithm):
             # print(self.population[0][0])
             if self.population[0][0] < self.fitness_threshold:
                 break
-        return self.population[0][1] # Return the grid of the best solution
+        return self.population[0][1]
+
         
 
     def draw_path(self, start_cell: Cell, end_cell: Cell, battery: Battery,
@@ -220,3 +170,83 @@ class Evolution(Algorithm):
                 return cable.house.cable_list[cable_index + 1:]
             
         Exception("Could not find a valid connection")
+
+    
+    def generate_greedy_solution(self, grid: Grid):
+        """ Method that generates a random solution based ont the Greedy algorithm"""
+        
+        cycle_counter = 1
+
+        while(self.total_houses != len(grid.allocated_house_list)):
+
+            random.shuffle(grid.non_allocated_house_list)
+
+            for house in grid.non_allocated_house_list:
+
+                battery_dict: Dict[Battery, int] = {}
+                cable_dict: Dict[Cable, int] = {}
+
+                # fill the dicts with possible connections and their distance
+                for battery in grid.battery_list:
+                    if battery.capacity >= house.max_output:
+                        distance = self.calculate_distance(house.cell,
+                                                           battery.cell)
+                        battery_dict[battery] = distance
+
+                        for cable in battery.cable_list:
+                            distance = self.calculate_distance(house.cell,
+                                                               cable.cell)
+                            cable_dict[cable] = distance
+                
+                # if there are valid batteries and cables, get the shortest
+                # connection of both
+                if battery_dict and cable_dict:
+                    battery_min_distance = min(battery_dict.values())
+                    cable_min_dinstance = min(cable_dict.values())
+
+                # connect the cable based on the shortest distance to a cable
+                # or directly to a battery
+                if (cable_dict and battery_dict and
+                   cable_min_dinstance < battery_min_distance):
+                    cable: Cable = min(cable_dict, key=cable_dict.get)
+                    cable.battery.capacity -= house.max_output
+                    cable.battery.house_list.append(house)
+                    house.battery = cable.battery
+                    grid.allocated_house_list.append(house)
+                    self.draw_path(house.cell, cable.cell, cable.battery, house)
+                elif battery_dict:
+                    battery: Battery = min(battery_dict, key=battery_dict.get)
+                    battery.capacity -= house.max_output
+                    battery.house_list.append(house)
+                    house.battery = battery
+                    grid.allocated_house_list.append(house)
+                    self.draw_path(battery.cell, house.cell, battery, house)
+                else:
+                    cycle_counter += 1
+                    grid.clean_grid()
+                    grid.allocated_house_list = []                    
+                    break
+
+        print(f"Solution found in {cycle_counter} cycle(s).")
+
+
+    def remove_cable(self, cable: Cable) -> None:
+        """ Removes a given cable from all related lists """
+        try:
+            cable.cell.cable_list.remove(cable)
+        except ValueError:
+            pass
+        try:
+            cable.house.cable_list.remove(cable)
+        except ValueError:
+            pass
+        try:
+            cable.battery.cable_list.remove(cable)
+        except ValueError:
+            pass
+        try:
+            self.grid.cable_list.remove(cable)
+        except ValueError:
+            pass
+
+

@@ -52,7 +52,7 @@ Voor deze case hebben wij een aantal algoritmes gebruikt om dit probleem zo goed
 | Greediest | Dit algoritme is een combinatie van Greedy en Random en kan met een threshold worden ingesteld. Dit algoritme houd geen rekening met gedeelde bekabeling. |
 | Greedy Shared | Dit algoritme is een verbetering van het Greedy algoritme omdat hier gebruik wordt gemaakt van gedeelde bekabeling. |
 | Greedy Beam Search | Dit constructieve algoritme is een beam search algoritme in combinatie met een greedy lookahead. Dit algoritme kan worden ingesteld met een beam width (stelt de hoeveelheid staten in die bij elke generatie maximaal worden bewaard), een lookahead depth (De hoeveelheid generaties die het algoritme vooruit gaat kijken) en een hoeveelheid van huizen die door dit algoritme worden toegewezen aan batterijen. De rest wordt toegediend door het Greedy shared algoritme om tijd te besparen. |
-| Evolution | |
+| Evolution | Dit is een algoritme dat iteratief werkt volgens een ''genetic algorithm'', het maakt elke generatie een populatie en neemt daarvan de meeste 'fitte' solution en gebruikt die als parent voor de volgende generatie. Hierdoor wordt steeds elke generatie beter dan de vorige, er worden ook random solutions toegevoegd om te zorgen dat er diversiteit is|
 
 
 ---
