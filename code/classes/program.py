@@ -3,7 +3,6 @@ import csv
 import json
 import time
 from typing import List
-from copy import deepcopy
 from statistics import mean, median
 from code.classes.battery import Battery
 from code.classes.house import House
@@ -12,6 +11,7 @@ from code.classes.grid import Grid
 from code.classes.cell import Cell
 from code.classes.user_interface import UserInterface
 from code.algorithms.algorithm import Algorithm
+from code.algorithms.move_batteries_simulated_annealing import MoveBatteriesSimulatedAnnealing
 
 
 class Program():
@@ -99,6 +99,11 @@ class Program():
         clock = pygame.time.Clock()
         running = True
 
+        # change the icon and header of the pygame window
+        pygame.display.set_caption('EnergySync - SmartGrid')
+        icon = pygame.image.load('sprites/battery_2.png')
+        pygame.display.set_icon(icon)
+
         # assign the connections to a cell for a correct pygame visualisation
         self.grid.assign_connections()
         self.load_sprites()
@@ -179,7 +184,18 @@ class Program():
             self.house_cable_iter_list = iter(self.allocated_house_list[self.house_index].cable_list)
             self.highlight_cable_list = self.copy_cable_list()
             self.load_sprites()
-    
+
+    def execute_algoritm_battery_algorithm(self) -> None:
+        """ Executes the battery MoveBatteriesSimulatedAnnealing algorithm"""
+
+        self.house_cable_iter_list = []
+        self.highlight_cable_list = []
+        self.grid.clean_grid_visualisation()
+        algorithm = MoveBatteriesSimulatedAnnealing(self.grid)
+        self.grid = algorithm.calculate_solution()
+        self.grid.assign_connections()
+        self.load_sprites()
+
     def load_sprites(self) -> None:
         """ Loads the sprites of the houses, batteries and cells for the
         visualisation mode. """
@@ -361,7 +377,9 @@ class Program():
 
     def generate_csv_output(self, cost_list: List[int]) -> None:
         """ Writes the results of the last iterations in a csv file.
-        Needs a list of total costs for every iteration that has been run. """
+        
+        - Needs a list of total costs for every iteration that has been
+        run. """
 
         # write the results to a csv file
         with open("data.csv", "w") as file:

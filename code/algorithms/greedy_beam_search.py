@@ -40,12 +40,12 @@ class GreedyBeamSearch(Algorithm):
 
         while(len(self.grid.house_list) != len(self.grid.allocated_house_list)):
 
-
             starting_algoritm = GreedyShared(self.grid)
-            starting_algoritm.calculate_solution(self.total_house_algorithm)
+            starting_algoritm.calculate_solution(self.total_house_algorithm,
+                                                 use_print_statements=False)
 
             extra_house_list = self.grid.house_list[-self.total_house_algorithm:]
-            
+
             random.shuffle(extra_house_list)
             self.grid.non_allocated_house_list = copy(extra_house_list)
 

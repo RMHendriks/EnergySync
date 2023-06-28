@@ -65,7 +65,12 @@ class UserInterface():
             "change_neighbourhood":
             Button(125, self.vertical_margin + 720,
                     self.event_change_neighbourhood,
-                    text="Change Neighbourhood!"),}
+                    text="Change Neighbourhood!"),
+            "battery_algorithm":
+            Button(self.horizontal_margin + self.grid_size + 125 ,
+                   self.vertical_margin + 720,
+                   self.event_execute_battery_algorithm,
+                   text="Improve Battery Position!")}
 
         self.text_dict: Dict[str, Text] = {
             "total_cost":
@@ -192,3 +197,9 @@ class UserInterface():
         visualisation mode. """
 
         self.program.swap_neighbourhood()
+
+    def event_execute_battery_algorithm(self) -> None:
+        """ Executes the battery algorithm that moves the batteries into a
+        better position. """
+
+        self.program.execute_algoritm_battery_algorithm()

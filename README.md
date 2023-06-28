@@ -1,6 +1,9 @@
 # EnergySync
 Project Algoritmes en Heuristieken. Wij maken de best mogelijke oplossing voor het SmartGrid probleem
 
+
+
+
  ## Experiment
 
 Het is waarschijnlijk nodig om pygame geïnstalleerd te hebben (pygame versie 2.4.0 of later)
