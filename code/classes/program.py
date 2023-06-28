@@ -357,7 +357,7 @@ class Program():
         output = [{"district": int(self.neighhourhood),
                    "costs-shared": self.calculate_total_cost()}]
 
-        for battery in self.battery_list:
+        for battery in self.grid.battery_list:
             house_output = []
             for house in battery.house_list:
                 cable_list_str: List[str] = []

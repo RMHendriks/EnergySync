@@ -1,3 +1,4 @@
+import sys
 from typing import List
 from code.classes.program import Program
 from code.algorithms.algorithm import Algorithm
@@ -9,8 +10,6 @@ from code.algorithms.greedy_beam_search import GreedyBeamSearch
 from code.algorithms.evolution import Evolution
 from code.algorithms.move_batteries_simulated_annealing import MoveBatteriesSimulatedAnnealing
 
-
-VISUALISATION_MODE = True
 
 # visualisation mode settings
 SCREEN_WIDTH = 1020
@@ -32,7 +31,12 @@ ALGORITHM: Algorithm = Random
 NEIGHBOURHOOD = "1"
 
 def main() -> None:
-    program = Program(NEIGHBOURHOOD, ALGORITHM, ITERATIONS, VISUALISATION_MODE,
+    """ Program entry point. """
+    visualisation_mode = True
+    if sys.argv and "--console" in sys.argv:
+        visualisation_mode = False
+
+    program = Program(NEIGHBOURHOOD, ALGORITHM, ITERATIONS, visualisation_mode,
                       SCREEN_WIDTH, SCREEN_HEIGHT, VERTICAL_MARGIN,
                       HORIZONTAL_MARGIN, GRID_SIZE, NEIGHBOURHOOD_LIST,
                       BATTERY_COST, CABLE_COST, ALGORITHM_LIST)
