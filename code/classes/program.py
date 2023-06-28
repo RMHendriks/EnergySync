@@ -15,48 +15,71 @@ from code.algorithms.algorithm import Algorithm
 
 
 class Program():
+    """ Class that holds all the logic to run algorithms and show their
+    visualisation. """
 
-    def __init__(self, neighhourhood: str, iterations: int, algorithm: Algorithm,
+    def __init__(self, neighhourhood: str, algorithm: Algorithm, iterations=1,
                  visualisation_mode=False, screen_width=1020, screen_height=1020,
                  vertical_margin=0, horizontal_margin=0, grid_size=51,
                  neighhourhood_list:List[str]=[], battery_cost=5000, cable_cost=9,
                  algorithm_list:List[Algorithm]=[]) -> None:
+        """ Initializes the program.
+
+        Required parameters:
+        - Needs a neighbourhoud as a str (either "1", "2" or "3").
+        - Needs an algorithm as a subclass of Algorithm.
+
+        Optional parameters:
+        - iterations as an interge for the amount of iterations in console mode (Default = 1).
+        - Toggles visualsiation mode on by turing visualisation_mode to True.
+        - screen_width to set the size of the width of display as an int in pixels (Default = 1020).
+        - screen_height to set the size of the height of display as an int in pixels (Default = 1020).
+        - vertical_margin to set the vertical margin of the grid as an int in pixels (Default = 0).
+        - horizontal_margin to set the horizontal margin of the grid as an int in pixels (Default = 0).
+        - grid size to decide the size of the grid as an int (Default = 51, with the default neighbourhoods this shouldn't be changed).
+        - neighourbood_list as a list of neighbourhoods (Default = [], Can be filled with any combination of "1", "2" and "3").
+        - battery_cost to decide the cost of the batteries (Default = 5000).
+        - cable_cost to decide the cost of the cables (Default = 9).
+        - algorithm_list as a list with any subclass of Algorithm (Default = []).
+
+        For visualisation mode: All parameters need to be passed an argument (with the exception of grid_size and iterations).
+
+        For Console mode: Only the amount of iterations needs to passed as an optional argument.
+        """
 
         self.visualisation_mode = visualisation_mode
 
-        self.algorithm: Algorithm = algorithm
-
+        # initialize visualisation mode variables
         self.screen_width = screen_width
         self.screen_height = screen_height
         self.vertical_margin = vertical_margin
         self.horizontal_margin = horizontal_margin
-        self.grid_size = grid_size
-        self.neighhourhood = neighhourhood
-        self.iterations = iterations
-
-        self.battery_cost = battery_cost
-        self.cable_cost = cable_cost
-
-        self.battery_list: List[Battery] = []
-        self.house_list: List[House] = []
-        self.cable_list: List[Cable] = []
-        self.allocated_house_list: List[House] = []
-        self.house_cable_iter_list: List[Cable] = []
-        self.highlight_cable_list: List[Cable] = []
-
-        self.grid = Grid(screen_width, screen_height, grid_size, vertical_margin,
-                        horizontal_margin, self.battery_list, self.house_list,
-                        self.cable_list)
-        self.algorithm_list: List[Algorithm] = algorithm_list
-        self.neighhourhood_list: List[str] = neighhourhood_list
-
         self.delay_timer_ms = 20
         self.pause = False
         self.update_cooldown_timer = pygame.time.get_ticks()
         self.house_index = 0
         self.cable_index = 0
 
+        # initialize visualisation mode lists
+        self.house_cable_iter_list: List[Cable] = []
+        self.highlight_cable_list: List[Cable] = []
+        self.algorithm_list: List[Algorithm] = algorithm_list
+        self.neighhourhood_list: List[str] = neighhourhood_list
+
+        # initialize console mode variable(s)
+        self.iterations = iterations
+
+        # initialize grid and grid requirements 
+        self.battery_cost = battery_cost
+        self.cable_cost = cable_cost
+        self.algorithm: Algorithm = algorithm
+        self.neighhourhood = neighhourhood
+        self.grid_size = grid_size
+        self.grid = Grid(screen_width, screen_height, grid_size, vertical_margin,
+                        horizontal_margin)
+
     def run(self) -> None:
+        """ Starts the excecution of the program. """
 
         self.grid.make_grid()
         self.import_neighbourhood()
@@ -65,37 +88,6 @@ class Program():
             self.run_visualisation_mode()
         else:
             self.run_console_mode()
-
-    def import_neighbourhood(self) -> None:
-        """ Import a neighboorhoud by reading the supplied csv file"""
-
-        # open the battery csv file
-        with open(f"data/neighbourhoods/district_{self.neighhourhood}/district-{self.neighhourhood}_batteries.csv") as file:
-            csv_battery_list = csv.reader(file)
-
-            # skip the header
-            next(csv_battery_list)
-
-            for battery in csv_battery_list:
-                position = battery[0].split(",")
-                cell = self.grid.get_cell_by_index(int(position[0]), int(position[1]))
-                battery_object = Battery(cell, float(battery[1]))
-                cell.battery = battery_object
-                self.battery_list.append(battery_object)
-
-        # open the house csv file
-        with open(f"data/neighbourhoods/district_{self.neighhourhood}/district-{self.neighhourhood}_houses.csv") as file:
-            csv_house_list = csv.reader(file)
-
-            # skip the header
-            next(csv_house_list)
-
-            for house in csv_house_list:
-                cell = self.grid.get_cell_by_index(int(house[0]), int(house[1]))
-                house_object = House(cell, float(house[2]))
-                cell.house = house_object
-                self.house_list.append(house_object)
-                self.grid.non_allocated_house_list.append(house_object)
 
     def run_visualisation_mode(self) -> None:
         """ Runs the pygame visualisation. """
@@ -118,7 +110,7 @@ class Program():
 
         while running:
             # poll for events
-            # pygame.QUIT event means the user clicked X to close your window
+            # pygame.QUIT triggers when the user closed the window
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -174,20 +166,37 @@ class Program():
         self.generate_output()
 
     def execute_algoritm(self) -> None:
-        """ Excutes the algoritm (needs to use an empty grid). """
+        """ Excutes the algoritm (needs to use an empty grid that can be
+        achieved by grid.clean_grid()). """
 
         algorithm: Algorithm = self.algorithm(self.grid)
         algorithm.calculate_solution()
 
         if self.visualisation_mode:
-            self.allocated_house_list = algorithm.allocated_house_list
+            self.allocated_house_list = self.grid.allocated_house_list
             self.house_index = 0
             self.cable_index = 0
             self.house_cable_iter_list = iter(self.allocated_house_list[self.house_index].cable_list)
             self.highlight_cable_list = self.copy_cable_list()
+            self.load_sprites()
+    
+    def load_sprites(self) -> None:
+        """ Loads the sprites of the houses, batteries and cells for the
+        visualisation mode. """
+
+        for battery in self.grid.battery_list:
+            battery.load_sprite()
+
+        for house in self.grid.house_list:
+            house.load_sprite()
+
+        for cell in self.grid:
+            cell.load_sprite()
 
     def draw(self, window: pygame.surface.Surface, user_interface: UserInterface) -> None:
-        """ Draw objects to the screen every frame. """
+        """ Draw objects to the screen every frame. Needs a
+        pygame.surface.Surface to be used as a window to draw on.
+        Needs a UserInterface to draw the user interface to the window. """
 
         for row in self.grid.grid:
             for cell in row:
@@ -196,22 +205,25 @@ class Program():
         for cable in self.highlight_cable_list:
             cable.cell.draw(window)
 
-        for house in self.house_list:
+        for house in self.grid.house_list:
             house.draw(window)
 
-        for battery in self.battery_list:
+        for battery in self.grid.battery_list:
             battery.draw(window)
         
         user_interface.draw(window)
 
     def update(self, user_interface: UserInterface) -> None:
-        """ Updates the visualisation every frame. """
+        """ Updates the logic of the program fot he visualisation every
+        frame. Needs a UserInterface as input to update the logic in the
+        UI elements. """
 
         self.update_objects()
-        user_interface.update()
+        user_interface.update_ui()
 
     def update_objects(self) -> None:
-        """"" Draws a cable every delay_timer_ms ms. """
+        """"" Draws a cable every delay_timer_ms ms. The cable thats being
+        drawn is drawn in red. Other cables are in a thinner blue. """
         
         # draw objects when not paused and the delay timer ms have passed
         if not self.pause and (pygame.time.get_ticks() - self.update_cooldown_timer >
@@ -258,16 +270,10 @@ class Program():
 
             self.update_cooldown_timer = pygame.time.get_ticks()
 
-    def load_sprites(self) -> None:
-        """ Loads the correct cable sprite for the cell """
-
-        for cell in self.grid:
-            cell.load_sprite()
-
     def calculate_total_cost(self) -> int:
         """ Calculate the total costs of the cables and batteries on the grid. """
 
-        return len(self.battery_list) * self.battery_cost + len(self.grid.cable_list) * self.cable_cost
+        return len(self.grid.battery_list) * self.battery_cost + len(self.grid.cable_list) * self.cable_cost
 
     def copy_cable_list(self) -> List[Cable]:
         """ Copies a cable list and fills the cables with copied cells
@@ -283,6 +289,38 @@ class Program():
             copied_cable_list.append(Cable(cell, battery, house))
 
         return copied_cable_list
+
+    def import_neighbourhood(self) -> None:
+        """ Import a neighboorhoud by reading the supplied csv file.
+        Imports the neighbourhood into the grid. """
+
+        # open the battery csv file
+        with open(f"data/neighbourhoods/district_{self.neighhourhood}/district-{self.neighhourhood}_batteries.csv") as file:
+            csv_battery_list = csv.reader(file)
+
+            # skip the header
+            next(csv_battery_list)
+
+            for battery in csv_battery_list:
+                position = battery[0].split(",")
+                cell = self.grid.get_cell_by_index(int(position[0]), int(position[1]))
+                battery_object = Battery(cell, float(battery[1]))
+                cell.battery = battery_object
+                self.grid.battery_list.append(battery_object)
+
+        # open the house csv file
+        with open(f"data/neighbourhoods/district_{self.neighhourhood}/district-{self.neighhourhood}_houses.csv") as file:
+            csv_house_list = csv.reader(file)
+
+            # skip the header
+            next(csv_house_list)
+
+            for house in csv_house_list:
+                cell = self.grid.get_cell_by_index(int(house[0]), int(house[1]))
+                house_object = House(cell, float(house[2]))
+                cell.house = house_object
+                self.grid.house_list.append(house_object)
+                self.grid.non_allocated_house_list.append(house_object)
 
     def swap_neighbourhood(self) -> None:
         """ Changes the grid and loads a new neighbourhood. Clears all lists
@@ -301,7 +339,8 @@ class Program():
         self.load_sprites()
 
     def generate_output(self) -> None:
-        """ Generate a JSON output for the solution of the case. """
+        """ Generate a JSON output for the solution of the case.
+        Output gets stored in the root folder of the project as output.json """
 
         output = [{"district": int(self.neighhourhood),
                    "costs-shared": self.calculate_total_cost()}]
@@ -325,7 +364,8 @@ class Program():
                 json_file.write(json_data)
 
     def generate_csv_output(self, cost_list: List[int]) -> None:
-        """ Writes the results of the last iterations in a csv file. """
+        """ Writes the results of the last iterations in a csv file.
+        Needs a list of total costs for every iteration that has been run. """
 
         # write the results to a csv file
         with open("data.csv", "w") as file:

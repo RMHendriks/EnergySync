@@ -15,20 +15,17 @@ class Greediest(Algorithm):
     def __init__(self, grid: Grid) -> None:
         
         self.grid: Grid = grid
-
-        self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
-        self.allocated_house_list: List[House] = []
         
     def calculate_solution(self) -> None:
         """ Method that calculates the results of the function. """
 
         cycle_counter = 1
 
-        total_houses = len(self.non_allocated_house_list)   
+        total_houses = len(self.grid.non_allocated_house_list)   
         threshold = total_houses * 0.72 # 90% threshold
 
         distance_list = []
-        for house in self.non_allocated_house_list:
+        for house in self.grid.non_allocated_house_list:
             for battery in self.grid.battery_list:
                 distance = self.calculate_distance(battery, house)
                 distance_list.append((distance, house, battery))
@@ -37,16 +34,16 @@ class Greediest(Algorithm):
         distance_list.sort(key=lambda x: x[0])
 
         
-        while len(self.allocated_house_list) != total_houses:
+        while len(self.grid.allocated_house_list) != total_houses:
 
-            non_allocated_houses = copy(self.non_allocated_house_list)
+            non_allocated_houses = copy(self.grid.non_allocated_house_list)
             # Iterate over sorted list and make connections
             for distance, house, battery in distance_list:
-                if battery.capacity >= house.max_output and house not in self.allocated_house_list and len(self.allocated_house_list) < threshold:
+                if battery.capacity >= house.max_output and house not in self.grid.allocated_house_list and len(self.grid.allocated_house_list) < threshold:
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
-                    self.allocated_house_list.append(house)
+                    self.grid.allocated_house_list.append(house)
                     non_allocated_houses.remove(house)
 
             random.shuffle(non_allocated_houses)
@@ -63,16 +60,16 @@ class Greediest(Algorithm):
                         battery.capacity -= house.max_output
                         battery.house_list.append(house)
                         house.battery = battery
-                        self.allocated_house_list.append(house)
+                        self.grid.allocated_house_list.append(house)
                         break
 
                 if len(tmp_battery_list) == 0 and house.battery is None:
                     cycle_counter += 1
                     self.grid.clean_grid()
-                    self.allocated_house_list = []
+                    self.grid.allocated_house_list = []
                     break
 
-        for house in self.allocated_house_list:
+        for house in self.grid.allocated_house_list:
             self.draw_path(house.battery, house)
 
         print(f"Solution found in {cycle_counter} cycle(s).")

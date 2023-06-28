@@ -11,5 +11,5 @@ if __name__ == "__main__":
     NEIGHBOURHOOD = "1"
     ALGORITHM: Algorithm = Evolution
 
-    program = Program("1", ITERATIONS, ALGORITHM)
+    program = Program("1", ALGORITHM, iterations=ITERATIONS)
     program.run()

@@ -10,7 +10,7 @@ from code.classes.house import House
 from code.classes.cable import Cable
 
 
-class Evolution():
+class Evolution(Algorithm):
     """ Class that implements the Evolution algorithm
     for the smart grid problem. """
 
@@ -18,25 +18,24 @@ class Evolution():
         
         self.grid: Grid = grid
 
-        self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
-        self.allocated_house_list: List[House] = []
+        self.fitness_threshold = 830
         self.population: List[Tuple[int, Grid]] = [] # population of solutions with corresponding fitness
         self.max_population: int = 10 # Population size
-        self.total_houses = len(self.non_allocated_house_list)
+        self.total_houses = len(self.grid.non_allocated_house_list)
         
     def generate_solution(self) -> Grid:
         """ Method that calculates the results of the function. """
 
         self.grid.clean_grid()
-        self.allocated_house_list = []
+        self.grid.allocated_house_list = []
 
         cycle_counter = 1
 
-        while(self.total_houses != len(self.allocated_house_list)):
+        while(self.total_houses != len(self.grid.allocated_house_list)):
 
-            random.shuffle(self.non_allocated_house_list)
+            random.shuffle(self.grid.non_allocated_house_list)
 
-            for house in self.non_allocated_house_list:
+            for house in self.grid.non_allocated_house_list:
                 
                 battery_dict: Dict[Battery, int] = {}
                 cable_dict: Dict[Cable, int] = {}
@@ -67,19 +66,19 @@ class Evolution():
                     cable.battery.capacity -= house.max_output
                     cable.battery.house_list.append(house)
                     house.battery = cable.battery
-                    self.allocated_house_list.append(house)
+                    self.grid.allocated_house_list.append(house)
                     self.draw_path(house.cell, cable.cell, cable.battery, house)
                 elif battery_dict:
                     battery: Battery = min(battery_dict, key=battery_dict.get)
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
-                    self.allocated_house_list.append(house)
+                    self.grid.allocated_house_list.append(house)
                     self.draw_path(battery.cell, house.cell, battery, house)
                 else:
                     cycle_counter += 1
                     self.grid.clean_grid()
-                    self.allocated_house_list = []                    
+                    self.grid.allocated_house_list = []                    
                     break
 
         # print(f"Solution found in {cycle_counter} cycle(s).")
@@ -142,13 +141,12 @@ class Evolution():
     def calculate_solution(self) -> None:
         """ Method that runs the algorithm"""
         # Define a threshold for fitness level
-        fitness_threshold = 800
         while True:
             self.generate_population()
             # Check if we have a solution with high enough fitness
             self.population.sort(key=lambda x: x[0], reverse=False) # Sort by fitness, high to low
             # print(self.population[0][0])
-            if self.population[0][0] < fitness_threshold:
+            if self.population[0][0] < self.fitness_threshold:
                 break
         return self.population[0][1] # Return the grid of the best solution
         

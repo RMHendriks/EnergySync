@@ -9,7 +9,7 @@ from code.algorithms.greedy_shared import GreedyShared
 from code.algorithms.greedy_beam_search import GreedyBeamSearch
 from code.algorithms.evolution import Evolution
 
-VISUALISATION_MODE = False
+VISUALISATION_MODE = True
 
 # visualisation mode settings
 SCREEN_WIDTH = 1020
@@ -23,7 +23,7 @@ NEIGHBOURHOOD_LIST: List[str] = ["1", "2", "3"]
 # console mode settings
 ITERATIONS = 1
 
-# Shared settings
+# shared settings
 GRID_SIZE = 51
 BATTERY_COST = 5000
 CABLE_COST = 9
@@ -32,7 +32,7 @@ NEIGHBOURHOOD = "1"
 
 
 def main() -> None:
-    program = Program(NEIGHBOURHOOD, ITERATIONS, ALGORITHM, VISUALISATION_MODE,
+    program = Program(NEIGHBOURHOOD, ALGORITHM, ITERATIONS, VISUALISATION_MODE,
                       SCREEN_WIDTH, SCREEN_HEIGHT, VERTICAL_MARGIN,
                       HORIZONTAL_MARGIN, GRID_SIZE, NEIGHBOURHOOD_LIST,
                       BATTERY_COST, CABLE_COST, ALGORITHM_LIST)

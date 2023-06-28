@@ -6,8 +6,16 @@ if TYPE_CHECKING:
 
 from code.classes.house import House
 
+
 class Cable():
+    """ Class that holds the logic for the cables on the grid. """
+
     def __init__(self, cell: Cell, battery: Battery, house: House) -> None:
+        """ Initializes a cable object.
+
+        - Needs a grid cell to locate the cable on the grid. 
+        - Needs a battery to trace its origin.
+        - Needs a house to trace its destination. """
 
         self.cell = cell
 

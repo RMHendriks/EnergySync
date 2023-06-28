@@ -36,7 +36,8 @@ class Connection():
     """ Class used for loading the correct sprite of a grid cell. """
 
     def __init__(self) -> None:
-        
+        """ Initializes a instance object. """
+
         self.top = False
         self.right = False
         self.bottom = False
@@ -45,13 +46,16 @@ class Connection():
     def transform_to_tuple(self) -> Tuple[bool]:
         """ Returns the connection format as a Tuple of booleans.
         Usefull for use with a dictionary.
-        (self.top, self.right, self.bottom, self.left). """
+
+        Returns: tuple(self.top, self.right, self.bottom, self.left). """
 
         return (self.top, self.right, self.bottom, self.left)
     
     def load_sprite(self, highlight_sprite=False) -> str:
         """ Loads a cell/cable sprite based on the
-        current connections of the grid. """
+        current connections of the grid.
+        
+        Returns: the sprite file name as a str. """
 
         if highlight_sprite:
             sprite = HIGHLIGHT_SPRITE_DICT[self.transform_to_tuple()]
@@ -61,7 +65,7 @@ class Connection():
         return sprite
     
     def clear_connections(self) -> None:
-        """ Set all connections back to the base value of False"""
+        """ Sets all connections back to the base value of False. """
 
         self.top = False
         self.right = False
@@ -69,5 +73,4 @@ class Connection():
         self.left = False       
     
     def __repr__(self) -> str:
-        
         return f"{self.top}, {self.right}, {self.bottom}, {self.left}"

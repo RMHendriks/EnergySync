@@ -15,19 +15,16 @@ class Random(Algorithm):
         
         self.grid: Grid = grid
 
-        self.non_allocated_house_list: List[House] = copy(self.grid.house_list)
-        self.allocated_house_list: List[House] = []
-
     def calculate_solution(self) -> None:
         """ Method that calculates the results of the function. """
 
         cycle_counter = 1
 
-        while(len(self.non_allocated_house_list) != len(self.allocated_house_list)):
+        while(len(self.grid.non_allocated_house_list) != len(self.grid.allocated_house_list)):
 
-            random.shuffle(self.non_allocated_house_list)
+            random.shuffle(self.grid.non_allocated_house_list)
 
-            for house in self.non_allocated_house_list:
+            for house in self.grid.non_allocated_house_list:
                 
                 tmp_battery_list: List[Battery] = copy(self.grid.battery_list)
 
@@ -39,16 +36,16 @@ class Random(Algorithm):
                         battery.capacity -= house.max_output
                         battery.house_list.append(house)
                         house.battery = battery
-                        self.allocated_house_list.append(house)
+                        self.grid.allocated_house_list.append(house)
                         break
 
                 if len(tmp_battery_list) == 0 and house.battery is None:
                     cycle_counter += 1
                     self.grid.clean_grid()
-                    self.allocated_house_list = []
+                    self.grid.allocated_house_list = []
                     break
 
-        for house in self.allocated_house_list:
+        for house in self.grid.allocated_house_list:
             self.draw_path(house.battery, house)
 
         print(f"Solution found in {cycle_counter} cycle(s).")
