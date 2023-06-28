@@ -1,22 +1,28 @@
 import random
-from queue import Queue
 from typing import List, Dict
 from copy import copy, deepcopy
 from code.algorithms.algorithm import Algorithm
 from code.algorithms.greedy_shared import GreedyShared
-from code.classes.program import Program
 from code.classes.grid import Grid
 from code.classes.cell import Cell
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
+
 class GreedyBeamSearch(Algorithm):
-    """ Class that implements the greedy algorithm
-    for the smart grid problem. """
+    """ Class that implements the greedy beam search algorithm for the smart
+    grid problem. The grid will be solved for an ajustable amount of houses
+    by the greedy shared algorithm, everything else will be done by this
+    algorithm. The algorithm uses a beam search with an ajustable beam and
+    depth. Algorithm can share cables with other houses. """
 
     def __init__(self, grid: Grid) -> None:
-        
+        """ Initializes the greedy beam search algorithm that can share cables
+        with other houses.
+
+        - grid as Grid object. """
+
         self.grid: Grid = grid
 
         # decide how may houses (out of 150) that are being run by this algorithm
@@ -26,7 +32,9 @@ class GreedyBeamSearch(Algorithm):
         self.lookahead_depth = 10
 
     def calculate_solution(self) -> None:
-        """ Method that calculates the results of the function. """
+        """ Executes the random beam search algorithm to create a grid with valid
+        battery and house connections by connecting houses to the closest
+        available batteries. Paths can be shared with other batteries."""
 
         cycle_counter = 1
 
@@ -53,7 +61,6 @@ class GreedyBeamSearch(Algorithm):
                     next_gen_states: List[State] = []
 
                     for state in states:
-                        # print(state)
                         if not state.grid.non_allocated_house_list:
                             break
                         
@@ -90,20 +97,20 @@ class GreedyBeamSearch(Algorithm):
                                 child_state.update()
                                 next_gen_states.append(child_state)
 
-                    # Prune the results to match the beam size
+                    # prune the results to match the beam size
                     if len(next_gen_states) > self.beam_width:
                         next_gen_states.sort(key=lambda x: x.total_cables)
                         next_gen_states = next_gen_states[:self.beam_width]
 
                     states = next_gen_states
-                
+
+                # choose the battery with the best future outlook
                 if len(states) > 0:
                     best_state = min(states, key=lambda x: x.total_cables)
                     battery = self.grid.get_battery_by_object(best_state.battery_history_dict[1])
                     end_cell = self.grid.get_cell_by_object(best_state.end_cell_history_dict[1])
                     house.cable_list = []
                     self.create_connection(self.grid, battery, house, end_cell)
-
                 else:
                     cycle_counter += 1
                     self.grid.clean_grid()
@@ -129,7 +136,14 @@ class GreedyBeamSearch(Algorithm):
 
     def draw_path(self, grid: Grid, start_cell: Cell, end_cell: Cell,
                   battery: Battery, house: House) -> None:
-        """ Method that draws a path between the house and battery. """
+        """ Method that draws a path between a start cell and end cell.
+        Can connect to other cables and stores the rest of the cable between
+        the connection and the battery in the house shared_cable_list.
+
+        - start_cell as a Cell object as start of the cable
+        - end_cell as a Cell object as end of the cable
+        - battery as a battery object for the battery connection
+        - house as the house connection for the house connection. """
 
         if house.cell.battery is None:
             Exception("House misses a battery connection.")
@@ -177,7 +191,13 @@ class GreedyBeamSearch(Algorithm):
 
     def calculate_distance(self, start_cell: Cell, end_cell: Cell) -> int:
         """ Calculates the distance between two cells. 
-        Distance is in cells. """
+        Distance is in cells.
+
+        - start_cell as Cell object.
+        - end_cell as Cell object.
+
+        Returns: the distance between the two cells in grid cells
+        as an int. """
 
         x_distance = abs(start_cell.x_index - end_cell.x_index)
         y_distance = abs(start_cell.y_index - end_cell.y_index)
@@ -188,7 +208,13 @@ class GreedyBeamSearch(Algorithm):
                          battery: Battery) -> List[Cable]:
         """ Gets the rest of the cable between the shared connection and the
         battery. Needs a cell of the connected cable location and the battery
-        to connect to. """
+        to connect to.
+        
+        - connected_cable_cell as a Cell object
+        - battery as a Battery object
+        
+        Returns: a list of Cable objects that are shared with
+        another house. """
 
         for cable in connected_cable_cell.cable_list:
             if cable.battery is battery:
@@ -205,6 +231,18 @@ class State():
     def __init__(self, grid: Grid, grid_gen=0,
                  battery_dict: Dict[int, Battery]={},
                  end_cell_dict: Dict[int, Cell]={}) -> None:
+        """ Initializes a State object used to store the state of a grid.
+        
+        - grid as Grid object
+        
+        Optional parameters:
+        - grid_gen as an int to indicate the genaration of the state
+        (Default = 0).
+        - battery_dict as a list of Battery objects used to track the
+        previous battery choices.
+        end_cell_dict as a lsit of Cell objects used to track the cable
+        connection points or battery connection points of previous generation
+        choices. """
         
         self.grid: Grid = grid
 
@@ -223,17 +261,23 @@ class State():
         self.total_non_assigned_houses = len(self.grid.non_allocated_house_list)
 
     def add_battery(self, depth: int, battery: Battery) -> None:
-        """ Adds a battery to the battery history dict"""
+        """ Adds a battery to the battery history dict.
+        
+        - depth as an int
+        - battery as a Battery object.
+        """
 
         self.battery_history_dict[depth] = battery
 
     def add_cell(self, depth: int, cell: Cell) -> None:
-        """ Adds a cell to the cell history dict"""
+        """ Adds a cell to the cell history dict.
+        - depth as an int
+        - battery as a Battery object.
+        """
 
         self.end_cell_history_dict[depth] = cell
 
-    def __str__(self) -> str:
-        
+    def __repr__(self) -> str:
         return (f"Grid gen:                {self.grid_gen}\n" +
                 f"Battery dict:            {self.battery_history_dict}\n" + 
                 f"End Cell dict:           {self.end_cell_history_dict}\n" +

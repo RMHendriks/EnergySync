@@ -1,22 +1,28 @@
 import random
-from typing import List, Dict
-from copy import copy
+from typing import Dict
 from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
+
 class Greedy(Algorithm):
     """ Class that implements the greedy algorithm
     for the smart grid problem. """
 
     def __init__(self, grid: Grid) -> None:
+        """ Initializes the greedy algorithm.
         
+        - grid as Grid object. """
+
         self.grid: Grid = grid
 
     def calculate_solution(self) -> None:
-        """ Method that calculates the results of the function. """
+        """ Executes the random algorithm to create a grid with valid
+        battery and house connections by connecting houses to the closest
+        available batteries. All paths are directly connected to the
+        battery. """
 
         cycle_counter = 1
 
@@ -35,7 +41,7 @@ class Greedy(Algorithm):
                         battery_dict[battery] = distance
 
                 if len(battery_dict) > 0:
-                    battery = min(battery_dict, key=battery_dict.get)
+                    battery: Battery = min(battery_dict, key=battery_dict.get)
                     battery.capacity -= house.max_output
                     battery.house_list.append(house)
                     house.battery = battery
@@ -52,7 +58,10 @@ class Greedy(Algorithm):
         print(f"Solution found in {cycle_counter} cycle(s).")
 
     def draw_path(self, battery: Battery, house: House) -> None:
-        """ Method that draws a path between the house and battery. """
+        """ Method that draws a path between the house and battery.
+
+        - battery as a battery object for the battery connection
+        - house as the house connection for the house connection. """
 
         if battery is None:
             Exception("House misses a battery connection.")
@@ -84,7 +93,13 @@ class Greedy(Algorithm):
 
     def calculate_distance(self, battery: Battery, house: House) -> int:
         """ Calculates the distance between a house and a battery. 
-        Distance is in cells. """
+        Distance is in cells.
+        
+        - battery as Battery object.
+        - house as House object.
+        
+        Returns: the distance between the the house and battery in grid cells
+        as an int. """
 
         x_distance = abs(battery.cell.x_index - house.cell.x_index)
         y_distance = abs(battery.cell.y_index - house.cell.y_index)

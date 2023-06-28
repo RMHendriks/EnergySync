@@ -1,6 +1,5 @@
 import random
 from typing import List, Dict
-from copy import copy, deepcopy
 from code.algorithms.algorithm import Algorithm
 from code.classes.grid import Grid
 from code.classes.cell import Cell
@@ -8,16 +7,31 @@ from code.classes.battery import Battery
 from code.classes.house import House
 from code.classes.cable import Cable
 
+
 class GreedyShared(Algorithm):
-    """ Class that implements the greedy algorithm
-    for the smart grid problem. """
+    """ Class that implements the greedy algorithm for the smart grid problem.
+    Algorithm can share cables with other houses. """
 
     def __init__(self, grid: Grid) -> None:
-        
+        """ Initializes the greedy algorithm that can share cables with
+        other houses.
+
+        - grid as Grid object. """
+
         self.grid: Grid = grid
 
-    def calculate_solution(self, subtract_total_houses=0) -> None:
-        """ Method that calculates the results of the function. """
+    def calculate_solution(self, subtract_total_houses=0,
+                           use_print_statements=True) -> None:
+        """ Executes the random algorithm to create a grid with valid
+        battery and house connections by connecting houses to the closest
+        available batteries. Paths can be shared with other batteries.
+
+        Optional parameters:
+        - subtract_total_houses as an int to subtract the total amount of
+        houses that will be assigned to a battery (Usefull to combine with
+        other algorithms) (Default = 0).
+        - use_print_statements as a bool to print status messages in the
+        command line (Default = True). """
 
         cycle_counter = 1
 
@@ -30,8 +44,7 @@ class GreedyShared(Algorithm):
             random.shuffle(house_list)
 
             for house in house_list:
-                print(f"House: {house_list.index(house) + 1}")
-                
+
                 battery_dict: Dict[Battery, int] = {}
                 cable_dict: Dict[Cable, int] = {}
 
@@ -46,7 +59,7 @@ class GreedyShared(Algorithm):
                             distance = self.calculate_distance(house.cell,
                                                                cable.cell)
                             cable_dict[cable] = distance
-                
+
                 # if there are valid batteries and cables, get the shortest
                 # connection of both
                 if battery_dict and cable_dict:
@@ -77,13 +90,20 @@ class GreedyShared(Algorithm):
                     self.grid.clean_grid()
                     self.grid.allocated_house_list = []
                     break
-        
-        if subtract_total_houses == 0:
+
+        if use_print_statements:
             print(f"Solution found in {cycle_counter} cycle(s).")
 
     def draw_path(self, start_cell: Cell, end_cell: Cell, battery: Battery,
                   house: House) -> None:
-        """ Method that draws a path between the house and battery. """
+        """ Method that draws a path between a start cell and end cell.
+        Can connect to other cables and stores the rest of the cable between
+        the connection and the battery in the house shared_cable_list.
+
+        - start_cell as a Cell object as start of the cable
+        - end_cell as a Cell object as end of the cable
+        - battery as a battery object for the battery connection
+        - house as the house connection for the house connection. """
 
         if house.cell.battery is None:
             Exception("House misses a battery connection.")
@@ -131,7 +151,13 @@ class GreedyShared(Algorithm):
 
     def calculate_distance(self, start_cell: Cell, end_cell: Cell) -> int:
         """ Calculates the distance between two cells. 
-        Distance is in cells. """
+        Distance is in cells.
+
+        - start_cell as Cell object.
+        - end_cell as Cell object.
+
+        Returns: the distance between the two cells in grid cells
+        as an int. """
 
         x_distance = abs(start_cell.x_index - end_cell.x_index)
         y_distance = abs(start_cell.y_index - end_cell.y_index)
@@ -142,7 +168,13 @@ class GreedyShared(Algorithm):
                          battery: Battery) -> List[Cable]:
         """ Gets the rest of the cable between the shared connection and the
         battery. Needs a cell of the connected cable location and the battery
-        to connect to. """
+        to connect to.
+        
+        - connected_cable_cell as a Cell object
+        - battery as a Battery object
+        
+        Returns: a list of Cable objects that are shared with
+        another house. """
 
         for cable in connected_cable_cell.cable_list:
             if cable.battery is battery:

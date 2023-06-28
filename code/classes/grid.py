@@ -181,10 +181,11 @@ class Grid():
 
         self.index_x = 0
         self.index_y = 0
+
         return self
 
     def __next__(self) -> Cell:
-        """ Returns the next cell in the grid. """
+        """ Returns: the next cell in the grid. """
 
         if (self.index_y < len(self.grid)):
 
