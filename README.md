@@ -5,6 +5,7 @@ Project Algoritmes en Heuristieken. In deze case proberen we met het gebruik van
 In dit probleem zijn er een aantal huizen en batterijen dat aan elkaar verbonden moet worden.
 Door middel van algoritmes proberen wij een zo goedkoop mogelijke oplossing te vinden voor het verbinden van de huizen met de batterijen en de kabels daartussen.
 
+
 ---
 
 ## Installatie en gebruik
@@ -52,7 +53,8 @@ Voor deze case hebben wij een aantal algoritmes gebruikt om dit probleem zo goed
 | Greediest | Dit algoritme is een combinatie van Greedy en Random en kan met een threshold worden ingesteld. Dit algoritme houd geen rekening met gedeelde bekabeling. |
 | Greedy Shared | Dit algoritme is een verbetering van het Greedy algoritme omdat hier gebruik wordt gemaakt van gedeelde bekabeling. |
 | Greedy Beam Search | Dit constructieve algoritme is een beam search algoritme in combinatie met een greedy lookahead. Dit algoritme kan worden ingesteld met een beam width (stelt de hoeveelheid staten in die bij elke generatie maximaal worden bewaard), een lookahead depth (De hoeveelheid generaties die het algoritme vooruit gaat kijken) en een hoeveelheid van huizen die door dit algoritme worden toegewezen aan batterijen. De rest wordt toegediend door het Greedy shared algoritme om tijd te besparen. |
-| Evolution | Dit is een algoritme dat iteratief werkt volgens een ''genetic algorithm'', het maakt elke generatie een populatie en neemt daarvan de meeste 'fitte' solution en gebruikt die als parent voor de volgende generatie. Hierdoor wordt steeds elke generatie beter dan de vorige, er worden ook random solutions toegevoegd om te zorgen dat er diversiteit is|
+| Evolution | Dit is een algoritme dat iteratief werkt volgens een ''genetic algorithm'', het maakt elke generatie een populatie en neemt daarvan de meeste 'fitte' solution en gebruikt die als parent voor de volgende generatie. Hierdoor wordt steeds elke generatie beter dan de vorige, er worden ook random solutions toegevoegd om te zorgen dat er diversiteit is. |
+| Move Batteries Simulated Annealing | Dit algoritme is geen algoritme wat een valide uitkomst berekent maar een algoritme wat gebruik maakt van Simulated Annealing om de batterijen naar een gunstigere plek beweegt voor andere algoritmes om te gebruiken als start staat. De hoeveelheid iteraties en starttemperatuur kunnen worden ingesteld. |
 
 
 ---
