@@ -11,10 +11,21 @@ from code.classes.cable import Cable
 
 
 class Evolution(Algorithm):
-    """ Class that implements the Evolution algorithm
-    for the smart grid problem. """
+    """ 
+    Class that implements the Evolution algorithm for the smart grid problem. 
+    
+    Attributes:
+    grid: Instance of the Grid class representing the grid for the algorithm.
+    fitness_threshold: An integer value which serves as a threshold for fitness of solutions.
+    population: A list of tuples where each tuple contains a Grid instance representing a solution and its corresponding fitness score.
+    max_population: An integer that represents the maximum size of the population.
+    total_houses: An integer that represents the total number of houses.
+    """
 
     def __init__(self, grid: Grid) -> None:
+        """
+        Initializes the Evolution class with a grid.
+        """
         
         self.grid: Grid = grid
 
@@ -24,7 +35,10 @@ class Evolution(Algorithm):
         self.total_houses = len(self.grid.non_allocated_house_list)
         
     def generate_solution(self) -> Grid:
-        """ Method that calculates the results of the function. """
+        """ 
+        Generates a solution for the problem using the greedy algorithm. 
+        Returns a deep copy of the grid.
+        """
 
         self.grid.clean_grid()
         self.grid.allocated_house_list = []
@@ -33,7 +47,11 @@ class Evolution(Algorithm):
     
 
     def generate_population(self) -> None:
-        """ Method that generates a random population of solutions. """
+        """ 
+        Generates a population of solutions. If the population already exists, 
+        keeps the best solution, mutates it 8 times and adds 2 new random solutions.
+        """
+
         # Check if population exists
         if not self.population:
             # Generate 10 solutions
@@ -41,54 +59,83 @@ class Evolution(Algorithm):
                 solution = self.generate_solution()
                 # print(solution)
                 fitness = self.fitness(solution)
-                print(fitness * 9 + 25000)
+                print(fitness)
                 self.population.append((fitness, solution))
 
         else:
             # Keep the best solution
-            self.population.sort(key=lambda x: x[0], reverse=False) # Sort by fitness, high to low
+            # Sort by fitness, high to low
+            self.population.sort(key=lambda x: x[0], reverse=False)
             best_solution = self.population[0]
             self.population = [best_solution]
 
             # Mutate best solution 8 times and add new solutions to the population
             for _ in range(8):
                 mutated_solution = self.mutate(deepcopy(best_solution[1]))
-                print("MUTATED SOLUTION: ", mutated_solution)
                 fitness = self.fitness(mutated_solution)
                 print(fitness)
                 self.population.append((fitness, mutated_solution))
+                if fitness < self.fitness_threshold:
+                    break
 
             # Generate 2 new random solutions
             for _ in range(2):
                 solution = self.generate_solution()
-                print("RANDOM SOLUTION: ", solution)
                 fitness = self.fitness(solution)
                 print(fitness)
                 self.population.append((fitness, solution))
+                if fitness < self.fitness_threshold:
+                    break
+
 
     def fitness(self, grid: Grid) -> int:
-        """ Method that takes a solution and calculates how well it performs. """
-        # The fitness is determined by the inverse of the number of cables
+        """ 
+        Calculates the fitness of a solution. The fitness is determined by the number of cables in the grid.
+        Returns the fitness score.
+        """
+
+        # The fitness is determined by the number of cables
         return len(grid.cable_list)
     
+    
     def mutate(self, grid: Grid) -> Grid:
-        """ Method that takes a solution and alters it"""
-        houses = random.sample(grid.house_list, len(grid.house_list) // 2) # Select half of houses
-        print(len(houses))
-        print(len(grid.house_list))
+        """ 
+        Mutates a solution by altering its grid. 
+        Returns the mutated grid.
+        """
+
+        # Select half of houses
+        houses = random.sample(grid.house_list, len(grid.house_list) // 2) 
+
         for house in houses:
             # Remove the house-battery connection
             for cable in house.cable_list:
                 self.remove_cable(cable)
+            # keep reference to the old battery to update its capacity
+            old_battery = house.battery
             house.cell.battery = None
-            house.battery.capacity += house.max_output
+            old_battery.capacity += house.max_output  # update capacity of old battery
             house.battery = None
+
+        # Connect these houses to a random available battery and make new cables
+        for house in houses:
+            possible_batteries = [battery for battery in grid.battery_list if battery.capacity >= house.max_output]
+            if possible_batteries:
+                new_battery = random.choice(possible_batteries)
+                new_battery.capacity -= house.max_output
+                new_battery.house_list.append(house)
+                house.battery = new_battery
+                self.draw_path(house.cell, new_battery.cell, new_battery, house)
 
         return grid
 
 
     def calculate_solution(self) -> None:
-        """ Method that runs the algorithm"""
+        """ 
+        Runs the algorithm until a solution with a fitness score 
+        less than the defined threshold is found.
+        """
+
         # Define a threshold for fitness level
         while True:
             self.generate_population()
@@ -99,11 +146,13 @@ class Evolution(Algorithm):
                 break
         return self.population[0][1]
 
-        
 
     def draw_path(self, start_cell: Cell, end_cell: Cell, battery: Battery,
                   house: House) -> None:
-        """ Method that draws a path between the house and battery. """
+        """ 
+        Draws a path between a house and a battery. 
+        Throws an exception if the house doesn't have a battery connection.
+        """
 
         if house.cell.battery is None:
             Exception("House misses a battery connection.")
@@ -149,14 +198,18 @@ class Evolution(Algorithm):
             Exception("Cables are not connected to the" + 
                       " battery or an other cable") 
 
+
     def calculate_distance(self, start_cell: Cell, end_cell: Cell) -> int:
-        """ Calculates the distance between two cells. 
-        Distance is in cells. """
+        """ 
+        Calculates the distance between two cells. 
+        Returns the distance.
+        """
 
         x_distance = abs(start_cell.x_index - end_cell.x_index)
         y_distance = abs(start_cell.y_index - end_cell.y_index)
 
         return x_distance + y_distance
+
 
     def get_shared_cable(self, connected_cable_cell: Cell,
                          battery: Battery) -> List[Cable]:
@@ -172,13 +225,16 @@ class Evolution(Algorithm):
         Exception("Could not find a valid connection")
 
     
-    def generate_greedy_solution(self, grid: Grid):
-        """ Method that generates a random solution based ont the Greedy algorithm"""
+    def generate_greedy_solution(self, grid: Grid) -> None:
+        """ 
+        Generates a random solution based on the Greedy algorithm.
+        """
         
         cycle_counter = 1
 
         while(self.total_houses != len(grid.allocated_house_list)):
 
+            # randomize the order of houses
             random.shuffle(grid.non_allocated_house_list)
 
             for house in grid.non_allocated_house_list:
@@ -231,7 +287,10 @@ class Evolution(Algorithm):
 
 
     def remove_cable(self, cable: Cable) -> None:
-        """ Removes a given cable from all related lists """
+        """ 
+        Removes a given cable from all related lists.
+        """
+
         try:
             cable.cell.cable_list.remove(cable)
         except ValueError:

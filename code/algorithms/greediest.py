@@ -18,7 +18,7 @@ class Greediest(Algorithm):
 
         self.grid: Grid = grid
         total_houses = len(self.grid.non_allocated_house_list)   
-        self.threshold = total_houses * 0.72 # 90% self.threshold
+        self.threshold = total_houses * 0.90 # 90% self.threshold
 
     def calculate_solution(self) -> None:
         """ Executes the greedy algorithm in combination with the random
